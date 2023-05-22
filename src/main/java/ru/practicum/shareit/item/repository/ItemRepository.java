@@ -12,6 +12,7 @@ public interface ItemRepository {
     Optional<Item> getItemById(Long id);
 
     Item createNewItem(Long userId, Item item);
+
     ItemDTO updateItem(Item item);
 
     void deleteItemById(Long id);
