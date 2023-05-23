@@ -3,7 +3,7 @@ package ru.practicum.shareit.user.repository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.user.dto.UserDTO;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
@@ -37,8 +37,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public UserDTO updateUser(User user) {
-        return UserMapper.userToDTO(user);
+    public UserDto updateUser(User user) {
+        return UserMapper.userToDto(user);
     }
 
     @Override

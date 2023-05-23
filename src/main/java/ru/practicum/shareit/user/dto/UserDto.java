@@ -8,18 +8,13 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
-@Getter
-@Setter
+@Value
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class UserDTO {
-    private Long id;
+public class UserDto {
+    Long id;
     @NotBlank(groups = Create.class, message = "Получен пользователь с пустым именем")
-    private String name;
+    String name;
     @Email(groups = {Create.class, Update.class}, message = "Полуен пользователь с некорректным email")
     @NotEmpty(groups = Create.class, message = "Получен пользователь без email")
-    @EqualsAndHashCode.Include
-    private String email;
+    String email;
 }

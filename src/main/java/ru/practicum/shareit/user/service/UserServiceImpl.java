@@ -7,7 +7,7 @@ import ru.practicum.shareit.exception.EmailValidationException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.mapper.UserMapper;
-import ru.practicum.shareit.user.dto.UserDTO;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
@@ -21,26 +21,26 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
-    public List<UserDTO> getAllUsers() {
+    public List<UserDto> getAllUsers() {
         return userRepository.getAllUsers().stream()
-                .map(UserMapper::userToDTO)
+                .map(UserMapper::userToDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public UserDTO getUserById(Long id) {
-        return UserMapper.userToDTO(userRepository.getUserById(id).orElseThrow(()
+    public UserDto getUserById(Long id) {
+        return UserMapper.userToDto(userRepository.getUserById(id).orElseThrow(()
                 -> new UserNotFoundException("Пользователь с id: '" + id + "' не найден")));
     }
 
     @Override
-    public UserDTO createNewUser(User user) {
+    public UserDto createNewUser(User user) {
         emailValidator(user);
-        return UserMapper.userToDTO(userRepository.createNewUser(user));
+        return UserMapper.userToDto(userRepository.createNewUser(user));
     }
 
     @Override
-    public UserDTO updateUser(Long id, User user) {
+    public UserDto updateUser(Long id, User user) {
         User userInMemory = userRepository.getUserById(id).orElseThrow(()
                 -> new UserNotFoundException("Пользователь с id: '" + id + "' не найден"));
         userPatcher(user, userInMemory);

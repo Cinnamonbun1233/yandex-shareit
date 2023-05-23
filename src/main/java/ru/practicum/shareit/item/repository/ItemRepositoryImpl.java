@@ -2,7 +2,7 @@ package ru.practicum.shareit.item.repository;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
-import ru.practicum.shareit.item.dto.ItemDTO;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 
@@ -37,8 +37,8 @@ public class ItemRepositoryImpl implements ItemRepository {
     }
 
     @Override
-    public ItemDTO updateItem(Item item) {
-        return ItemMapper.itemToDTO(item);
+    public ItemDto updateItem(Item item) {
+        return ItemMapper.itemToDto(item);
     }
 
     @Override

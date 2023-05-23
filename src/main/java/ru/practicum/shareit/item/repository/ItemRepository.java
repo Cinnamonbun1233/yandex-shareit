@@ -1,6 +1,6 @@
 package ru.practicum.shareit.item.repository;
 
-import ru.practicum.shareit.item.dto.ItemDTO;
+import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
@@ -13,7 +13,7 @@ public interface ItemRepository {
 
     Item createNewItem(Long userId, Item item);
 
-    ItemDTO updateItem(Item item);
+    ItemDto updateItem(Item item);
 
     void deleteItemById(Long id);
 
