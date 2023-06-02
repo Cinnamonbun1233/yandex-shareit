@@ -11,7 +11,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 
-//DONE!!!
 @Data
 @Value
 @Builder
@@ -19,7 +18,7 @@ import java.time.LocalDateTime;
 public class CommentRequestDto {
     @Null
     Long id;
-    @NotBlank
+    @NotBlank(message = "Получен пустой комментарий")
     String text;
     Item item;
     User author;

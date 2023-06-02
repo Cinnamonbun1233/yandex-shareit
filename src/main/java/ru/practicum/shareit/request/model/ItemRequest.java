@@ -7,7 +7,6 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-//DONE!!!
 @Entity
 @Data
 @Builder
@@ -24,6 +23,6 @@ public class ItemRequest {
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private User requestor;
-    @Column(name = "creation_date")
+    @Column(name = "CREATION_DATE")
     private LocalDateTime created;
 }

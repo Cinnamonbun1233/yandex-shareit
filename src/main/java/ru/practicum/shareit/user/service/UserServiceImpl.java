@@ -10,7 +10,6 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 
-//DONE!!!
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {

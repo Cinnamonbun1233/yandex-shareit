@@ -10,7 +10,6 @@ import ru.practicum.shareit.user.model.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-//DONE!!!
 @Entity
 @Data
 @Builder
@@ -23,10 +22,10 @@ public class Comment {
     private Long id;
     private String text;
     @ManyToOne
-    @JoinColumn(name = "item_id")
+    @JoinColumn(name = "ITEM_ID")
     private Item item;
     @ManyToOne
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "AUTHOR_ID")
     private User author;
     private LocalDateTime created;
 }

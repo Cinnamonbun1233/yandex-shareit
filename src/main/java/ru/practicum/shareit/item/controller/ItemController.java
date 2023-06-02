@@ -17,35 +17,34 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
-//DONE!!!
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/items")
 public class ItemController {
-    private final ItemService itemServiceImpl;
+    private final ItemService itemService;
 
     @PostMapping
     public ItemShortResponseDto createNewItem(@RequestBody @Validated(CreateItem.class) ItemRequestDto itemRequestDto,
                                               @RequestHeader("X-Sharer-User-Id") @NotNull Long ownerId) {
-        return itemServiceImpl.createNewItem(itemRequestDto, ownerId);
+        return itemService.createNewItem(itemRequestDto, ownerId);
     }
 
     @PostMapping("/{itemId}/comment")
     public CommentResponseDto createNewComment(@PathVariable Long itemId,
-                                               @RequestBody @Valid CommentRequestDto dto,
+                                               @RequestBody @Valid CommentRequestDto commentRequestDto,
                                                @RequestHeader("X-Sharer-User-Id") @NotNull Long userId) {
-        return itemServiceImpl.createNewComment(itemId, dto, userId);
+        return itemService.createNewComment(itemId, commentRequestDto, userId);
     }
 
     @GetMapping("/{id}")
     public ItemResponseDto getItemById(@RequestHeader("X-Sharer-User-Id") @NotNull Long userId,
                                        @PathVariable("id") Long itemId) {
-        return itemServiceImpl.getItemById(userId, itemId);
+        return itemService.getItemById(userId, itemId);
     }
 
     @GetMapping
     public List<ItemResponseDto> getItemsByOwner(@RequestHeader("X-Sharer-User-Id") @NotNull Long userId) {
-        return itemServiceImpl.getItemsByOwner(userId);
+        return itemService.getItemsByOwner(userId);
     }
 
     @PatchMapping("/{id}")
@@ -53,18 +52,18 @@ public class ItemController {
                                                   @RequestHeader("X-Sharer-User-Id") @NotNull Long ownerId,
                                                   @PathVariable("id") Long itemId) {
         itemRequestDto.setId(itemId);
-        return itemServiceImpl.updateItemByOwner(itemRequestDto, ownerId);
+        return itemService.updateItemByOwner(itemRequestDto, ownerId);
     }
 
     @GetMapping("/search")
     public List<ItemRequestDto> searchItemsByText(@RequestParam String text, @RequestHeader("X-Sharer-User-Id") @NotNull Long userId) {
-        return itemServiceImpl.searchItemsByText(text, userId);
+        return itemService.searchItemsByText(text, userId);
     }
 
     @GetMapping("/{itemId}/comment/search")
     public List<CommentResponseDto> searchCommentsByText(@PathVariable Long itemId,
                                                          @RequestHeader("X-Sharer-User-Id") @NotNull Long userId,
                                                          @RequestParam @NotBlank String text) {
-        return itemServiceImpl.searchCommentsByText(itemId, userId, text);
+        return itemService.searchCommentsByText(itemId, userId, text);
     }
 }

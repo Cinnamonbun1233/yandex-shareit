@@ -30,7 +30,6 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-//DONE!!!
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -42,43 +41,42 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     public ItemShortResponseDto createNewItem(ItemRequestDto itemRequestDto, Long ownerId) {
-        User user = getUser(ownerId);
-        Item item = ItemMapper.itemRequestDtoToItem(itemRequestDto, user);
+        Item item = ItemMapper.itemRequestDtoToItem(itemRequestDto, getUser(ownerId));
         return ItemMapper.itemToItemShortResponseDto(itemRepository.save(item));
     }
 
     @Override
-    public CommentResponseDto createNewComment(Long itemId, CommentRequestDto dto, Long userId) {
+    public CommentResponseDto createNewComment(Long itemId, CommentRequestDto commentRequestDto, Long userId) {
         Booking booking = getBooking(itemId, userId);
-        Comment comment = CommentMapper.commentRequestDtoToComment(dto, booking.getBooker(), booking.getItem());
+        Comment comment = CommentMapper.commentRequestDtoToComment(commentRequestDto, booking.getBooker(), booking.getItem());
         return CommentMapper.commentToCommentResponseDto(commentRepository.save(comment));
     }
 
     public ItemResponseDto getItemById(Long userId, Long itemId) {
-        LocalDateTime now = LocalDateTime.now();
-        User user = getUser(userId);
-        Item item = getItem(itemId);
-        BookingShortDto nextBooking = bookingRepository.findNextBookingByItemId(itemId, now)
+        BookingShortDto nextBooking = bookingRepository.findNextBookingByItemId(itemId, LocalDateTime.now())
                 .map(BookingMapper::bookingToBookingShortDto).orElse(null);
-        BookingShortDto lastBooking = bookingRepository.findLastBookingByItemId(itemId, now)
+        BookingShortDto lastBooking = bookingRepository.findLastBookingByItemId(itemId, LocalDateTime.now())
                 .map(BookingMapper::bookingToBookingShortDto).orElse(null);
         List<CommentResponseDto> commentResponseDtoList = CommentMapper.commentsToCommentResponseDtoList(
                 commentRepository.findAllByItemIdOrderByCreatedDesc(itemId));
-        if (user.equals(item.getOwner())) {
-            return ItemMapper.itemToItemResponseDto(item, nextBooking, lastBooking, commentResponseDtoList);
+
+        if (getUser(userId).equals(getItem(itemId).getOwner())) {
+            return ItemMapper.itemToItemResponseDto(getItem(itemId), nextBooking, lastBooking, commentResponseDtoList);
         } else {
-            return ItemMapper.itemToItemResponseDto(item, null, null, commentResponseDtoList);
+            return ItemMapper.itemToItemResponseDto(getItem(itemId), null, null, commentResponseDtoList);
         }
     }
 
     public List<ItemResponseDto> getItemsByOwner(Long ownerId) {
-        LocalDateTime now = LocalDateTime.now();
         List<Item> itemList = itemRepository.findAllByOwnerId(ownerId);
-        List<Long> ids = itemList.stream().map(Item::getId).collect(Collectors.toList());
+        List<Long> ids = itemList.stream()
+                .map(Item::getId)
+                .collect(Collectors.toList());
         List<Booking> bookingList = bookingRepository.findAllByItemIdIn(ids);
         List<Comment> commentList = commentRepository.findAllByItemIdIn(ids);
+
         if (!bookingList.isEmpty()) {
-            return connectBookingsAndComments(bookingList, itemList, commentList, now);
+            return connectBookingsAndComments(bookingList, itemList, commentList, LocalDateTime.now());
         } else {
             return ItemMapper.itemToItemResponseDtoList(itemList);
         }
@@ -86,11 +84,8 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     public ItemShortResponseDto updateItemByOwner(ItemRequestDto itemRequestDto, Long ownerId) {
-        User user = getUser(ownerId);
-        Long itemId = itemRequestDto.getId();
-        Item item = getItem(itemId);
+        Item item = getItem(itemRequestDto.getId());
         checkOwner(item, ownerId);
-        item.setOwner(user);
         setAttributes(itemRequestDto, item);
         return ItemMapper.itemToItemShortResponseDto(itemRepository.save(item));
     }
@@ -110,17 +105,19 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private List<ItemResponseDto> connectBookingsAndComments(List<Booking> bookings, List<Item> items,
-                                                             List<Comment> comments, LocalDateTime cur) {
-        Map<Long, List<Booking>> bookingMap = bookings.stream().collect(Collectors.groupingBy(b -> b.getItem().getId()));
-        Map<Long, List<Comment>> commentMap = comments.stream().collect(Collectors.groupingBy(c -> c.getItem().getId()));
+                                                             List<Comment> comments, LocalDateTime now) {
+        Map<Long, List<Booking>> bookingMap = bookings.stream()
+                .collect(Collectors.groupingBy(b -> b.getItem().getId()));
+        Map<Long, List<Comment>> commentMap = comments.stream()
+                .collect(Collectors.groupingBy(c -> c.getItem().getId()));
         List<ItemResponseDto> itemResponseDtoList = new ArrayList<>();
 
         for (Item item : items) {
-            BookingShortDto nextBooking = getBookingShortDto(cur, bookingMap, item);
-            BookingShortDto lastBooking = getShortDto(cur, bookingMap, item);
-            List<CommentResponseDto> responseComments = CommentMapper
+            BookingShortDto nextBooking = getAfterBookingShortDto(now, bookingMap, item);
+            BookingShortDto lastBooking = getBeforeBookingShortDto(now, bookingMap, item);
+            List<CommentResponseDto> commentResponseDtoList = CommentMapper
                     .commentsToCommentResponseDtoList(commentMap.getOrDefault(item.getId(), Collections.emptyList()));
-            itemResponseDtoList.add(ItemMapper.itemToItemResponseDto(item, nextBooking, lastBooking, responseComments));
+            itemResponseDtoList.add(ItemMapper.itemToItemResponseDto(item, nextBooking, lastBooking, commentResponseDtoList));
         }
 
         return itemResponseDtoList;
@@ -141,18 +138,19 @@ public class ItemServiceImpl implements ItemService {
     private void checkOwner(Item item, Long ownerId) {
         if (item.getOwner() == null || !ownerId.equals(item.getOwner().getId())) {
             throw new ItemUpdatingException("Пользователь с id: '" + ownerId
-                    + "' не является владельцем предмета с id: '" + item.getName());
+                    + "' не является владельцем предмета: '" + item.getName() + "'");
         }
+        item.setOwner(getUser(ownerId));
     }
 
     private User getUser(Long ownerId) {
         return userRepository.findById(ownerId).orElseThrow(()
-                -> new UserNotFoundException(("Пользователь с id: '" + ownerId + "' не найден")));
+                -> new UserNotFoundException("Пользователь с id: '" + ownerId + "' не найден"));
     }
 
     private Item getItem(Long itemId) {
-        return itemRepository.findById(itemId)
-                .orElseThrow(() -> new ItemNotFoundException("Предмет с id: '" + itemId + "' не найден"));
+        return itemRepository.findById(itemId).orElseThrow(() 
+                -> new ItemNotFoundException("Предмет с id: '" + itemId + "' не найден"));
     }
 
     private Booking getBooking(Long itemId, Long userId) {
@@ -161,19 +159,21 @@ public class ItemServiceImpl implements ItemService {
                         ("Пользователь с id: '" + userId + "' не брал в аренду предмет с id: '" + itemId + "'")));
     }
 
-    private static BookingShortDto getShortDto(LocalDateTime cur, Map<Long, List<Booking>> bookingMap, Item item) {
+    private static BookingShortDto getBeforeBookingShortDto(LocalDateTime now, Map<Long, List<Booking>> bookingMap, Item item) {
         return bookingMap.getOrDefault(item.getId(), Collections.emptyList()).stream()
-                .filter(b -> b.getStartDate().isBefore(cur))
+                .filter(b -> b.getStartDate().isBefore(now))
                 .sorted(Comparator.comparing(Booking::getStartDate, Comparator.reverseOrder()))
                 .map(BookingMapper::bookingToBookingShortDto)
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
 
-    private static BookingShortDto getBookingShortDto(LocalDateTime cur, Map<Long, List<Booking>> bookingMap, Item item) {
+    private static BookingShortDto getAfterBookingShortDto(LocalDateTime now, Map<Long, List<Booking>> bookingMap, Item item) {
         return bookingMap.getOrDefault(item.getId(), Collections.emptyList()).stream()
-                .filter(b -> b.getStartDate().isAfter(cur))
+                .filter(b -> b.getStartDate().isAfter(now))
                 .sorted(Comparator.comparing(Booking::getStartDate, Comparator.naturalOrder()))
                 .map(BookingMapper::bookingToBookingShortDto)
-                .findFirst().orElse(null);
+                .findFirst()
+                .orElse(null);
     }
 }

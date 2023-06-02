@@ -8,7 +8,6 @@ import ru.practicum.shareit.user.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
-//DONE!!!
 @UtilityClass
 public class UserMapper {
     public static User userRequestDtoToUser(UserRequestDto userRequestDto) {

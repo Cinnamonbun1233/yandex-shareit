@@ -8,11 +8,10 @@ import ru.practicum.shareit.item.dto.ItemShortResponseDto;
 
 import java.util.List;
 
-//DONE!!!
 public interface ItemService {
     ItemShortResponseDto createNewItem(ItemRequestDto itemRequestDto, Long ownerId);
 
-    CommentResponseDto createNewComment(Long itemId, CommentRequestDto dto, Long userId);
+    CommentResponseDto createNewComment(Long itemId, CommentRequestDto commentRequestDto, Long userId);
 
     ItemResponseDto getItemById(Long userId, Long itemId);
 

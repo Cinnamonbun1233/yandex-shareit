@@ -11,7 +11,6 @@ import ru.practicum.shareit.user.validation.UpdateUser;
 
 import java.util.List;
 
-//DONE!!!
 @Slf4j
 @RestController
 @RequiredArgsConstructor

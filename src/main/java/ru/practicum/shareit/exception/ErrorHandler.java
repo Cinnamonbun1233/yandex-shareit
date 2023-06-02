@@ -10,21 +10,20 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.Map;
 import java.util.Objects;
 
-//DONE!!!
-@RestControllerAdvice(basePackages = "ru.practicum.shareit")
 @Slf4j
+@RestControllerAdvice(basePackages = "ru.practicum.shareit")
 public class ErrorHandler {
-    @ExceptionHandler({ItemNotAvailableException.class})
+    @ExceptionHandler(ItemNotAvailableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handle(final RuntimeException ex) {
-        log.warn("Ошибка запроса: '{}'", ex.getMessage());
-        return Map.of("Ошибка запроса", ex.getMessage());
+    public Map<String, String> handle(final RuntimeException exception) {
+        log.warn("Ошибка запроса: '{}'", exception.getMessage());
+        return Map.of("Ошибка запроса", exception.getMessage());
     }
 
     @ExceptionHandler(UnknownStateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleUnsupportedEx(final RuntimeException ex) {
-        return Map.of("error", "Unknown state: " + ex.getMessage());
+    public Map<String, String> handleUnsupportedException(final RuntimeException exception) {
+        return Map.of("Ошибка", "Unknown state: " + exception.getMessage());
     }
 
     @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class,
@@ -37,8 +36,8 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidationEx(final MethodArgumentNotValidException ex) {
-        log.warn("Ошибка валидации: '{}'", Objects.requireNonNull(ex.getFieldError()).getDefaultMessage());
-        return Map.of("Ошибка валидации", Objects.requireNonNull(ex.getFieldError().getDefaultMessage()));
+    public Map<String, String> handleValidationException(final MethodArgumentNotValidException exception) {
+        log.warn("Ошибка валидации: '{}'", Objects.requireNonNull(exception.getFieldError()).getDefaultMessage());
+        return Map.of("Ошибка валидации", Objects.requireNonNull(exception.getFieldError().getDefaultMessage()));
     }
 }
