@@ -1,10 +1,9 @@
-package ru.practicum.shareit.booking.validation;
+package ru.practicum.shareit.booking.status;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.booking.status.State;
 
-//DONE!!!
 @Component
 public class StateConverter implements Converter<String, State> {
     @Override

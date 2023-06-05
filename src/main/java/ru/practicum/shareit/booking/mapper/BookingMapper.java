@@ -13,7 +13,6 @@ import ru.practicum.shareit.user.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
-//DONE!!!
 public class BookingMapper {
     public static Booking bookingRequestDtoToBooking(BookingRequestDto bookingRequestDto, Item item, User user) {
         return Booking.builder()
@@ -38,11 +37,11 @@ public class BookingMapper {
     }
 
     public static List<BookingResponseDto> bookingsToBookingResponseDtoList(Iterable<Booking> bookings) {
-        List<BookingResponseDto> dtos = new ArrayList<>();
+        List<BookingResponseDto> bookingResponseDtoList = new ArrayList<>();
         for (Booking booking : bookings) {
-            dtos.add(bookingToBookingResponseDto(booking));
+            bookingResponseDtoList.add(bookingToBookingResponseDto(booking));
         }
-        return dtos;
+        return bookingResponseDtoList;
     }
 
     public static BookingShortDto bookingToBookingShortDto(Booking booking) {

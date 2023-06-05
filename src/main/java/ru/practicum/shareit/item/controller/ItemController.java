@@ -9,8 +9,8 @@ import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.dto.ItemShortResponseDto;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.item.validation.CreateItem;
-import ru.practicum.shareit.item.validation.UpdateItem;
+import ru.practicum.shareit.validation.CreateItem;
+import ru.practicum.shareit.validation.UpdateItem;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;

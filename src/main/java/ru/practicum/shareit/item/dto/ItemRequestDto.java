@@ -2,7 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.item.validation.CreateItem;
+import ru.practicum.shareit.validation.CreateItem;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;

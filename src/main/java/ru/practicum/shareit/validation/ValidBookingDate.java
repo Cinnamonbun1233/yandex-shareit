@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.validation;
+package ru.practicum.shareit.validation;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;
@@ -7,7 +7,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-//DONE!!!
 @Constraint(validatedBy = {BookingDateValidator.class})
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

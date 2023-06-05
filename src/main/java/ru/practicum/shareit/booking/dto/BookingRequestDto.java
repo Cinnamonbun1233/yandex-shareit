@@ -6,8 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Value;
 import ru.practicum.shareit.booking.status.BookingStatus;
-import ru.practicum.shareit.booking.validation.DependentValidations;
-import ru.practicum.shareit.booking.validation.ValidBookingDate;
+import ru.practicum.shareit.validation.DependentValidations;
+import ru.practicum.shareit.validation.ValidBookingDate;
 
 import javax.validation.GroupSequence;
 import javax.validation.constraints.FutureOrPresent;
@@ -15,7 +15,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 
-//DONE!!!
 @Data
 @Builder
 @Value

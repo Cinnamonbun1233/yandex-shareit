@@ -28,7 +28,6 @@ import java.util.Objects;
 
 import static ru.practicum.shareit.booking.model.QBooking.booking;
 
-//DONE!!!
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -54,13 +53,12 @@ public class BookingServiceImpl implements BookingService {
         }
 
         Booking booking = BookingMapper.bookingRequestDtoToBooking(bookingRequestDto, item, user);
-
         return BookingMapper.bookingToBookingResponseDto(bookingRepository.save(booking));
     }
 
     public List<BookingResponseDto> getAllUserBookings(State state, Long userId, Boolean owner) {
         List<Predicate> predicateList = new ArrayList<>();
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime cur = LocalDateTime.now();
 
         if (owner) {
             predicateList.add(booking.item.owner.id.eq(userId));
@@ -68,7 +66,7 @@ public class BookingServiceImpl implements BookingService {
             predicateList.add(booking.booker.id.eq(userId));
         }
 
-        stateSwitcher(state, predicateList, now);
+        stateSwitcher(state, predicateList, cur);
 
         List<BookingResponseDto> bookingResponseDtoList = BookingMapper.bookingsToBookingResponseDtoList(
                 bookingRepository.findAll(Objects.requireNonNull(ExpressionUtils.allOf(predicateList)),
@@ -111,18 +109,18 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-    private static void stateSwitcher(State state, List<Predicate> predicateList, LocalDateTime now) {
+    private static void stateSwitcher(State state, List<Predicate> predicateList, LocalDateTime cur) {
         switch (state) {
             case ALL:
                 break;
             case FUTURE:
-                predicateList.add(booking.startDate.after(now));
+                predicateList.add(booking.startDate.after(cur));
                 break;
             case PAST:
-                predicateList.add(booking.endDate.before(now));
+                predicateList.add(booking.endDate.before(cur));
                 break;
             case CURRENT:
-                predicateList.add(booking.startDate.loe(now).and(booking.endDate.gt(now)));
+                predicateList.add(booking.startDate.loe(cur).and(booking.endDate.gt(cur)));
                 break;
             case REJECTED:
                 predicateList.add(booking.status.eq(BookingStatus.REJECTED));

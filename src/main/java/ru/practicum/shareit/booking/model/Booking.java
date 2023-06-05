@@ -8,7 +8,6 @@ import ru.practicum.shareit.user.model.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-//DONE!!!
 @Entity
 @Data
 @Builder
@@ -19,9 +18,9 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "start_date")
+    @Column(name = "START_DATE")
     private LocalDateTime startDate;
-    @Column(name = "end_date")
+    @Column(name = "END_DATE")
     private LocalDateTime endDate;
     @ManyToOne
     @ToString.Exclude

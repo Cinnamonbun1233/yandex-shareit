@@ -23,7 +23,7 @@ public class ErrorHandler {
     @ExceptionHandler(UnknownStateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleUnsupportedException(final RuntimeException exception) {
-        return Map.of("Ошибка", "Unknown state: " + exception.getMessage());
+        return Map.of("error", "Unknown state: " + exception.getMessage());
     }
 
     @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class,
