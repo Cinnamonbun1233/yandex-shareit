@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "REQUEST")
+@Table(name = "request")
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,6 +23,6 @@ public class ItemRequest {
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private User requestor;
-    @Column(name = "CREATION_DATE")
+    @Column(name = "creation_date")
     private LocalDateTime created;
 }

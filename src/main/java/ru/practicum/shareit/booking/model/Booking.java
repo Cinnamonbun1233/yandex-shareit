@@ -13,14 +13,14 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "BOOKINGS")
+@Table(name = "bookings")
 public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "START_DATE")
+    @Column(name = "start_date")
     private LocalDateTime startDate;
-    @Column(name = "END_DATE")
+    @Column(name = "end_date")
     private LocalDateTime endDate;
     @ManyToOne
     @ToString.Exclude
