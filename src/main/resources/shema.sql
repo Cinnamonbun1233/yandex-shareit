@@ -20,7 +20,7 @@
      name          varchar(100) NOT NULL,
      description   varchar(200),
      available     bool,
-     owner_id      BIGINT       NOT NULL REFERENCES users (id) ON DELETE CASCADE,
+     owner_id      BIGINT NOT NULL REFERENCES users (id) ON DELETE CASCADE,
      request_id    BIGINT REFERENCES item_request (id)
      );
 
