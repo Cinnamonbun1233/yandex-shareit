@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "request")
+@Table(name = "ietm_request")
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

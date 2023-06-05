@@ -11,14 +11,13 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
 
 @Data
-@Value
 @Builder
 public class UserRequestDto {
     @Null(groups = CreateUser.class)
-    Long id;
+    private Long id;
     @NotBlank(groups = CreateUser.class, message = "Получен пользователь с пустым именем")
-    String name;
+    private String name;
     @Email(groups = {UpdateUser.class, CreateUser.class}, message = "Полуен пользователь с некорректным email")
     @NotBlank(groups = CreateUser.class, message = "Получен пользователь с пустым email")
-    String email;
+    private String email;
 }
