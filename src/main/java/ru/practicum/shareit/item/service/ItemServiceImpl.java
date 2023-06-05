@@ -149,7 +149,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private Item getItem(Long itemId) {
-        return itemRepository.findById(itemId).orElseThrow(() 
+        return itemRepository.findById(itemId).orElseThrow(()
                 -> new ItemNotFoundException("Предмет с id: '" + itemId + "' не найден"));
     }
 
