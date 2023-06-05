@@ -2,7 +2,6 @@ package ru.practicum.shareit.user.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Value;
 import ru.practicum.shareit.validation.CreateUser;
 import ru.practicum.shareit.validation.UpdateUser;
 
