@@ -12,11 +12,11 @@ import java.time.LocalDateTime;
  */
 
 @Entity
-@Table(name = "item_request")
 @Data
 @Builder
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
+@Table(name = "item_request")
 public class ItemRequest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

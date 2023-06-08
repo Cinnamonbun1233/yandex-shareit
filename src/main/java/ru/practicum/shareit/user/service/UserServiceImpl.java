@@ -39,19 +39,21 @@ public class UserServiceImpl implements UserService {
         String name = userRequestDto.getName();
         User user = userRepository.findById(id).orElseThrow(()
                 -> new UserNotFoundException("Пользователь с id: '" + id + "' не найден"));
-
-        if (email != null) {
-            user.setEmail(email);
-        }
-        if (name != null) {
-            user.setName(name);
-        }
-
+        userPatcher(email, name, user);
         return UserMapper.userToUserRequestDto(userRepository.save(user));
     }
 
     @Override
     public void deleteUserById(Long id) {
         userRepository.deleteById(id);
+    }
+
+    private static void userPatcher(String email, String name, User user) {
+        if (email != null) {
+            user.setEmail(email);
+        }
+        if (name != null) {
+            user.setName(name);
+        }
     }
 }
