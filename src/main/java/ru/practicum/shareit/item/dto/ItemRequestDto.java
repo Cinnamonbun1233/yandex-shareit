@@ -10,20 +10,18 @@ import javax.validation.constraints.Null;
 @Data
 @Builder
 public class ItemRequestDto {
-    @Null(groups = CreateItem.class)
-    private Long id;
-    @NotBlank(groups = CreateItem.class, message = "Получен предмет с пустным названием")
-    private String name;
-    @NotBlank(groups = CreateItem.class, message = "Получен предмет с пустным описанием")
-    private String description;
-    @NotNull(groups = CreateItem.class, message = "Получен предмет без статуса доступности")
-    private Boolean available;
-
-    public interface CreateItem {
-
+    public interface NewItem {
     }
 
     public interface UpdateItem {
-
     }
+
+    @Null(groups = {NewItem.class})
+    private Long id;
+    @NotBlank(message = "Имя вещи не может быть пустым", groups = {NewItem.class})
+    private String name;
+    @NotBlank(message = "Поле описания не должно быть пустым", groups = {NewItem.class})
+    private String description;
+    @NotNull(message = "Поле доступность к аренде должно присутствовать", groups = {NewItem.class})
+    private Boolean available;
 }

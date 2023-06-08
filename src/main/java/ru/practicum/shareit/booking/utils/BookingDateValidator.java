@@ -8,6 +8,9 @@ import javax.validation.ConstraintValidatorContext;
 public class BookingDateValidator implements ConstraintValidator<ValidBookingDate, BookingRequestDto> {
     @Override
     public boolean isValid(BookingRequestDto bookingRequestDto, ConstraintValidatorContext constraintValidatorContext) {
-        return bookingRequestDto.isDatesCorrect();
+        if (bookingRequestDto.isDatesCorrect()) {
+            return true;
+        }
+        return false;
     }
 }

@@ -4,8 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Value;
-import ru.practicum.shareit.booking.status.BookingStatus;
+import ru.practicum.shareit.booking.BookingStatus;
 import ru.practicum.shareit.booking.utils.ValidBookingDate;
 
 import javax.validation.GroupSequence;
@@ -14,32 +13,36 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 
+/**
+ * TODO Sprint add-bookings.
+ */
 @Data
 @Builder
-@Value
 @ValidBookingDate(groups = BookingRequestDto.DependentValidations.class)
 @GroupSequence({BookingRequestDto.class, BookingRequestDto.DependentValidations.class})
 public class BookingRequestDto {
+    interface DependentValidations {
+    }
+
     @Null
-    Long id;
+    private Long id;
     @FutureOrPresent
     @NotNull
     @JsonProperty("start")
-    LocalDateTime startDate;
+    private LocalDateTime startDate;
     @FutureOrPresent
     @NotNull
     @JsonProperty("end")
-    LocalDateTime endDate;
+    private LocalDateTime endDate;
     @NotNull
-    Long itemId;
-    BookingStatus status;
+    private Long itemId;
+    private BookingStatus status;
 
     @JsonIgnore
     public Boolean isDatesCorrect() {
-        return !this.startDate.isAfter(endDate) && !this.startDate.isEqual(endDate);
-    }
-
-    interface DependentValidations {
-
+        if (this.startDate.isAfter(endDate) || this.startDate.isEqual(endDate)) {
+            return false;
+        }
+        return true;
     }
 }
