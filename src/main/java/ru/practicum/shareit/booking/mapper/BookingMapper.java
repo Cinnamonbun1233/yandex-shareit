@@ -30,7 +30,7 @@ public class BookingMapper {
                 .id(booking.getId())
                 .startDate(booking.getStartDate())
                 .endDate(booking.getEndDate())
-                .item(ItemMapper.toItemShort(booking.getItem()))
+                .item(ItemMapper.itemToItemShortDto(booking.getItem()))
                 .booker(UserMapper.userToUserShortDto(booking.getBooker()))
                 .status(booking.getStatus())
                 .build();

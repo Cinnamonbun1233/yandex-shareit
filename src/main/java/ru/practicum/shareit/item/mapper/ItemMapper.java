@@ -11,9 +11,8 @@ import ru.practicum.shareit.user.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
-
 public class ItemMapper {
-    public static ItemRequestDto itemToDto(Item item) {
+    public static ItemRequestDto itemToItemRequestDto(Item item) {
         return ItemRequestDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -22,15 +21,15 @@ public class ItemMapper {
                 .build();
     }
 
-    public static List<ItemRequestDto> itemToDto(Iterable<Item> items) {
-        List<ItemRequestDto> dtos = new ArrayList<>();
+    public static List<ItemRequestDto> itemToItemRequestDto(Iterable<Item> items) {
+        List<ItemRequestDto> itemRequestDtoList = new ArrayList<>();
         for (Item item : items) {
-            dtos.add(itemToDto(item));
+            itemRequestDtoList.add(itemToItemRequestDto(item));
         }
-        return dtos;
+        return itemRequestDtoList;
     }
 
-    public static ItemShortDto toItemShort(Item item) {
+    public static ItemShortDto itemToItemShortDto(Item item) {
         return ItemShortDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -39,7 +38,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static ItemResponseDto toItemResponseDto(Item item, BookingShortDto next, BookingShortDto last) {
+    public static ItemResponseDto itemToItemResponseDto(Item item, BookingShortDto next, BookingShortDto last) {
         return ItemResponseDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -50,10 +49,10 @@ public class ItemMapper {
                 .build();
     }
 
-    public static ItemResponseDto toItemResponseDto(Item item,
-                                                    BookingShortDto next,
-                                                    BookingShortDto last,
-                                                    List<CommentResponseDto> comments) {
+    public static ItemResponseDto itemToItemResponseDto(Item item,
+                                                        BookingShortDto next,
+                                                        BookingShortDto last,
+                                                        List<CommentResponseDto> comments) {
         return ItemResponseDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -65,15 +64,15 @@ public class ItemMapper {
                 .build();
     }
 
-    public static List<ItemResponseDto> toItemResponseDto(List<Item> items) {
-        List<ItemResponseDto> dtos = new ArrayList<>();
+    public static List<ItemResponseDto> itemToItemResponseDto(List<Item> items) {
+        List<ItemResponseDto> itemResponseDtoList = new ArrayList<>();
         for (Item item : items) {
-            dtos.add(toItemResponseDto(item, null, null));
+            itemResponseDtoList.add(itemToItemResponseDto(item, null, null));
         }
-        return dtos;
+        return itemResponseDtoList;
     }
 
-    public static Item dtoToItem(ItemRequestDto itemRequestDto, User owner) {
+    public static Item itemRequestDtoToItem(ItemRequestDto itemRequestDto, User owner) {
         return Item.builder()
                 .name(itemRequestDto.getName())
                 .description(itemRequestDto.getDescription())
