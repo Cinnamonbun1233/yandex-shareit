@@ -107,7 +107,6 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-
     private Item getItemRepo(BookingRequestDto bookingRequestDto) {
         return itemRepository.findById(bookingRequestDto.getItemId()).orElseThrow(() ->
                 new ItemNotFoundException("Предмет с id: '" + bookingRequestDto.getItemId() + "' не найден"));
@@ -124,8 +123,7 @@ public class BookingServiceImpl implements BookingService {
                 predicates.add(booking.endDate.before(now));
                 break;
             case CURRENT:
-                predicates.add(booking.startDate.loe(now)
-                        .and(booking.endDate.gt(now)));
+                predicates.add(booking.startDate.loe(now).and(booking.endDate.gt(now)));
                 break;
             case REJECTED:
                 predicates.add(booking.status.eq(BookingStatus.REJECTED));
