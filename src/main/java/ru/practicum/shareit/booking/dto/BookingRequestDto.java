@@ -6,8 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Value;
 import ru.practicum.shareit.booking.status.BookingStatus;
-import ru.practicum.shareit.validation.DependentValidations;
-import ru.practicum.shareit.validation.ValidBookingDate;
+import ru.practicum.shareit.booking.utils.ValidBookingDate;
 
 import javax.validation.GroupSequence;
 import javax.validation.constraints.FutureOrPresent;
@@ -18,8 +17,8 @@ import java.time.LocalDateTime;
 @Data
 @Builder
 @Value
-@ValidBookingDate(groups = DependentValidations.class)
-@GroupSequence({BookingRequestDto.class, DependentValidations.class})
+@ValidBookingDate(groups = BookingRequestDto.DependentValidations.class)
+@GroupSequence({BookingRequestDto.class, BookingRequestDto.DependentValidations.class})
 public class BookingRequestDto {
     @Null
     Long id;
@@ -38,5 +37,9 @@ public class BookingRequestDto {
     @JsonIgnore
     public Boolean isDatesCorrect() {
         return !this.startDate.isAfter(endDate) && !this.startDate.isEqual(endDate);
+    }
+
+    interface DependentValidations {
+
     }
 }

@@ -2,7 +2,6 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.validation.CreateItem;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -19,4 +18,12 @@ public class ItemRequestDto {
     private String description;
     @NotNull(groups = CreateItem.class, message = "Получен предмет без статуса доступности")
     private Boolean available;
+
+    public interface CreateItem {
+
+    }
+
+    public interface UpdateItem {
+
+    }
 }

@@ -1,4 +1,6 @@
-package ru.practicum.shareit.validation;
+package ru.practicum.shareit.booking.utils;
+
+import ru.practicum.shareit.booking.utils.BookingDateValidator;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

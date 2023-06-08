@@ -9,8 +9,6 @@ import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
 import ru.practicum.shareit.item.dto.ItemShortResponseDto;
 import ru.practicum.shareit.item.service.ItemService;
-import ru.practicum.shareit.validation.CreateItem;
-import ru.practicum.shareit.validation.UpdateItem;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
@@ -24,7 +22,7 @@ public class ItemController {
     private final ItemService itemService;
 
     @PostMapping
-    public ItemShortResponseDto createNewItem(@RequestBody @Validated(CreateItem.class) ItemRequestDto itemRequestDto,
+    public ItemShortResponseDto createNewItem(@RequestBody @Validated(ItemRequestDto.CreateItem.class) ItemRequestDto itemRequestDto,
                                               @RequestHeader("X-Sharer-User-Id") @NotNull Long ownerId) {
         return itemService.createNewItem(itemRequestDto, ownerId);
     }
@@ -48,7 +46,7 @@ public class ItemController {
     }
 
     @PatchMapping("/{id}")
-    public ItemShortResponseDto updateItemByOwner(@Validated(UpdateItem.class) @RequestBody ItemRequestDto itemRequestDto,
+    public ItemShortResponseDto updateItemByOwner(@Validated(ItemRequestDto.UpdateItem.class) @RequestBody ItemRequestDto itemRequestDto,
                                                   @RequestHeader("X-Sharer-User-Id") @NotNull Long ownerId,
                                                   @PathVariable("id") Long itemId) {
         itemRequestDto.setId(itemId);

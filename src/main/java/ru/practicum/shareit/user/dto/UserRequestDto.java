@@ -2,8 +2,6 @@ package ru.practicum.shareit.user.dto;
 
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.validation.CreateUser;
-import ru.practicum.shareit.validation.UpdateUser;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -19,4 +17,12 @@ public class UserRequestDto {
     @Email(groups = {UpdateUser.class, CreateUser.class}, message = "Полуен пользователь с некорректным email")
     @NotBlank(groups = CreateUser.class, message = "Получен пользователь с пустым email")
     private String email;
+
+    public interface CreateUser {
+
+    }
+
+    public interface UpdateUser {
+
+    }
 }
