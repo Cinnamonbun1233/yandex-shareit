@@ -2,6 +2,8 @@ package ru.practicum.shareit.user.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.validation.CreateUser;
+import ru.practicum.shareit.validation.UpdateUser;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -10,14 +12,6 @@ import javax.validation.constraints.Null;
 @Data
 @Builder
 public class UserRequestDto {
-    public interface CreateUser {
-
-    }
-
-    public interface UpdateUser {
-
-    }
-
     @Null(groups = CreateUser.class)
     private Long id;
     @NotBlank(groups = CreateUser.class, message = "Получен пользователь с пустым именем")

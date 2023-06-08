@@ -6,6 +6,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.validation.CreateUser;
+import ru.practicum.shareit.validation.UpdateUser;
 
 import java.util.List;
 
@@ -17,7 +19,7 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping
-    public UserRequestDto createNewUser(@Validated(UserRequestDto.CreateUser.class) @RequestBody UserRequestDto userRequestDto) {
+    public UserRequestDto createNewUser(@Validated(CreateUser.class) @RequestBody UserRequestDto userRequestDto) {
         log.info("Получен запрос на добавление нового пользователя");
         return userService.createNewUser(userRequestDto);
     }
@@ -35,7 +37,7 @@ public class UserController {
     }
 
     @PatchMapping("/{id}")
-    public UserRequestDto updateUser(@PathVariable Long id, @Validated(UserRequestDto.UpdateUser.class) @RequestBody UserRequestDto userRequestDto) {
+    public UserRequestDto updateUser(@PathVariable Long id, @Validated(UpdateUser.class) @RequestBody UserRequestDto userRequestDto) {
         log.info("Получен запрос на обновление пользователя с id: '{}'", id);
         return userService.updateUserById(id, userRequestDto);
     }
