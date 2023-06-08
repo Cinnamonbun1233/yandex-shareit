@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.booking.status.BookingStatus;
 import ru.practicum.shareit.booking.utils.ValidBookingDate;
 
 import javax.validation.GroupSequence;

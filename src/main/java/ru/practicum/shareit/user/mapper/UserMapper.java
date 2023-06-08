@@ -1,5 +1,7 @@
-package ru.practicum.shareit.user.dto;
+package ru.practicum.shareit.user.mapper;
 
+import ru.practicum.shareit.user.dto.UserRequestDto;
+import ru.practicum.shareit.user.dto.UserShortResponseDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
