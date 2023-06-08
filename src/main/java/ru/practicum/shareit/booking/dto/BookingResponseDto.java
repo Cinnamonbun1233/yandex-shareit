@@ -5,7 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import ru.practicum.shareit.booking.status.BookingStatus;
 import ru.practicum.shareit.item.dto.ItemShortDto;
-import ru.practicum.shareit.user.dto.UserShortResponseDto;
+import ru.practicum.shareit.user.dto.UserShortDto;
 
 import java.time.LocalDateTime;
 
@@ -18,6 +18,6 @@ public class BookingResponseDto {
     @JsonProperty("end")
     private LocalDateTime endDate;
     private ItemShortDto item;
-    private UserShortResponseDto booker;
+    private UserShortDto booker;
     private BookingStatus status;
 }
