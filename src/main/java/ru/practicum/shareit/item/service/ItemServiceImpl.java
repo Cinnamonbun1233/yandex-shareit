@@ -41,31 +41,27 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     public ItemShortDto createNewItem(ItemRequestDto itemRequestDto, Long ownerId) {
-        User user = userRepository.findById(ownerId).orElseThrow(()
-                -> new UserNotFoundException("Пользователь с id: '" + ownerId + "' не найден"));
+        User user = getUserRepo(ownerId);
         Item item = ItemMapper.itemRequestDtoToItem(itemRequestDto, user);
         return ItemMapper.itemToItemShortDto(itemRepository.save(item));
     }
 
     @Override
     public CommentResponseDto createNewComment(Long itemId, CommentRequestDto commentRequestDto, Long userId) {
-        Booking booking = getBooking(itemId, userId);
+        Booking booking = getBookingRepo(itemId, userId);
         Comment comment = CommentMapper.commentRequestDtoToComment(commentRequestDto, booking.getBooker(), booking.getItem());
         return CommentMapper.commentToCommentResponseDto(commentRepository.save(comment));
     }
 
     public ItemResponseDto getItemById(Long userId, Long itemId) {
         LocalDateTime now = LocalDateTime.now();
-        User user = userRepository.findById(userId).orElseThrow(()
-                -> new UserNotFoundException(String.format("Пользователь с id: %s не обнаружен", userId)));
-        Item item = itemRepository.findById(itemId).orElseThrow(()
-                -> new ItemNotFoundException(String.format("Вещь с id: %s не обнаружена", itemId)));
+        User user = getUserRepo(userId);
+        Item item = getItemRepo(itemId);
 
         BookingShortDto nextBooking = bookingRepository.findNextBookingByItemId(itemId, now)
                 .map(BookingMapper::toShortDto).orElse(null);
         BookingShortDto lastBooking = bookingRepository.findLastBookingByItemId(itemId, now)
                 .map(BookingMapper::toShortDto).orElse(null);
-
         List<CommentResponseDto> comments = CommentMapper.commentToCommentResponseDto(
                 commentRepository.findAllByItem_IdOrderByCreatedDesc(itemId));
 
@@ -75,6 +71,7 @@ public class ItemServiceImpl implements ItemService {
             return ItemMapper.itemToItemResponseDto(item, null, null, comments);
         }
     }
+
 
     public List<ItemResponseDto> getItemsByOwner(Long ownerId) {
         LocalDateTime now = LocalDateTime.now();
@@ -92,11 +89,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     public ItemShortDto updateItem(ItemRequestDto itemRequestDto, Long ownerId) {
-        User owner = userRepository.findById(ownerId).orElseThrow(()
-                -> new UserNotFoundException(String.format("Пользователь с id: %s не обнаружен", ownerId)));
+        User owner = getUserRepo(ownerId);
         Long itemId = itemRequestDto.getId();
-        Item item = itemRepository.findById(itemId).orElseThrow(()
-                -> new ItemNotFoundException(String.format("Вещь с id: %s не обнаружена", itemId)));
+        Item item = getItemRepo(itemId);
         checkOwner(item, ownerId);
         item.setOwner(owner);
         setAttributes(itemRequestDto, item);
@@ -104,26 +99,19 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private List<ItemResponseDto> connectBookingsAndComments(List<Booking> bookings, List<Item> items,
-                                                             List<Comment> comments, LocalDateTime cur) {
+                                                             List<Comment> comments, LocalDateTime now) {
         Map<Long, List<Booking>> bookingMap = bookings.stream().collect(Collectors.groupingBy(b -> b.getItem().getId()));
         Map<Long, List<Comment>> commentMap = comments.stream().collect(Collectors.groupingBy(c -> c.getItem().getId()));
         List<ItemResponseDto> result = new ArrayList<>();
 
         for (Item item : items) {
-            BookingShortDto nextBooking = bookingMap.getOrDefault(item.getId(), Collections.emptyList()).stream()
-                    .filter(b -> b.getStartDate().isAfter(cur))
-                    .sorted(Comparator.comparing(Booking::getStartDate, Comparator.naturalOrder()))
-                    .map(BookingMapper::toShortDto)
-                    .findFirst().orElse(null);
-            BookingShortDto lastBooking = bookingMap.getOrDefault(item.getId(), Collections.emptyList()).stream()
-                    .filter(b -> b.getStartDate().isBefore(cur))
-                    .sorted(Comparator.comparing(Booking::getStartDate, Comparator.reverseOrder()))
-                    .map(BookingMapper::toShortDto)
-                    .findFirst().orElse(null);
+            BookingShortDto nextBooking = getBookingShortDtoNext(now, bookingMap, item);
+            BookingShortDto lastBooking = getBookingShortDtoLast(now, bookingMap, item);
             List<CommentResponseDto> responseComments = CommentMapper.commentToCommentResponseDto(commentMap.getOrDefault(item.getId(),
                     Collections.emptyList()));
             result.add(ItemMapper.itemToItemResponseDto(item, nextBooking, lastBooking, responseComments));
         }
+
         return result;
     }
 
@@ -133,22 +121,22 @@ public class ItemServiceImpl implements ItemService {
             return Collections.emptyList();
         }
 
-        userRepository.findById(userId).orElseThrow(()
-                -> new UserNotFoundException(String.format("Пользователь с id: %s не обнаружен", userId)));
+        getUserRepo(userId);
         return ItemMapper.itemToItemRequestDto(itemRepository.searchItemsByNameOrDescription(text));
     }
 
     @Override
     public List<CommentResponseDto> searchCommentsByText(Long itemId, Long userId, String text) {
-        userRepository.findById(userId).orElseThrow(()
-                -> new UserNotFoundException(String.format("Пользователь с id: %s не обнаружен", userId)));
+        getUserRepo(userId);
         return CommentMapper.commentToCommentResponseDto(commentRepository.searchByText(itemId, text));
     }
 
     private void checkOwner(Item item, Long ownerId) {
         User owner = item.getOwner();
+
         if (owner == null || !ownerId.equals(owner.getId())) {
-            throw new ItemUpdateException(String.format("Пользователь с id: %s не является владельцем вещи %s", ownerId, item.getName()));
+            throw new ItemUpdateException("Пользователь с id: '" + ownerId + "' не является владельцем вещи: '"
+                    + item.getName() + "'");
         }
     }
 
@@ -168,9 +156,35 @@ public class ItemServiceImpl implements ItemService {
         }
     }
 
-    private Booking getBooking(Long itemId, Long userId) {
+    private Booking getBookingRepo(Long itemId, Long userId) {
         return bookingRepository.findFirstByBooker_IdAndItem_IdAndEndDateBefore(userId, itemId, LocalDateTime.now())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         ("Пользователь с id: '" + userId + "' не брал в аренду предмет с id: '" + itemId + "'")));
+    }
+
+    private User getUserRepo(Long userId) {
+        return userRepository.findById(userId).orElseThrow(()
+                -> new UserNotFoundException("Пользователь с id: '" + userId + "' не найден"));
+    }
+
+    private Item getItemRepo(Long itemId) {
+        return itemRepository.findById(itemId).orElseThrow(()
+                -> new ItemNotFoundException("Предмет с id: '" + itemId + "' не найден"));
+    }
+
+    private static BookingShortDto getBookingShortDtoLast(LocalDateTime now, Map<Long, List<Booking>> bookingMap, Item item) {
+        return bookingMap.getOrDefault(item.getId(), Collections.emptyList()).stream()
+                .filter(b -> b.getStartDate().isBefore(now))
+                .sorted(Comparator.comparing(Booking::getStartDate, Comparator.reverseOrder()))
+                .map(BookingMapper::toShortDto)
+                .findFirst().orElse(null);
+    }
+
+    private static BookingShortDto getBookingShortDtoNext(LocalDateTime now, Map<Long, List<Booking>> bookingMap, Item item) {
+        return bookingMap.getOrDefault(item.getId(), Collections.emptyList()).stream()
+                .filter(b -> b.getStartDate().isAfter(now))
+                .sorted(Comparator.comparing(Booking::getStartDate, Comparator.naturalOrder()))
+                .map(BookingMapper::toShortDto)
+                .findFirst().orElse(null);
     }
 }
