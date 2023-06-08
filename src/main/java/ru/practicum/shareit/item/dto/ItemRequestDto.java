@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.validation.CreateItem;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -10,18 +11,12 @@ import javax.validation.constraints.Null;
 @Data
 @Builder
 public class ItemRequestDto {
-    public interface NewItem {
-    }
-
-    public interface UpdateItem {
-    }
-
-    @Null(groups = {NewItem.class})
+    @Null(groups = CreateItem.class)
     private Long id;
-    @NotBlank(message = "Имя вещи не может быть пустым", groups = {NewItem.class})
+    @NotBlank(groups = CreateItem.class, message = "Получен предмет с пустным названием")
     private String name;
-    @NotBlank(message = "Поле описания не должно быть пустым", groups = {NewItem.class})
+    @NotBlank(groups = CreateItem.class, message = "Получен предмет с пустным описанием")
     private String description;
-    @NotNull(message = "Поле доступность к аренде должно присутствовать", groups = {NewItem.class})
+    @NotNull(groups = CreateItem.class, message = "Получен предмет без статуса доступности")
     private Boolean available;
 }

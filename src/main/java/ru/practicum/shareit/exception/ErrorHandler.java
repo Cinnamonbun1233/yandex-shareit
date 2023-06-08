@@ -6,37 +6,44 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import ru.practicum.shareit.exception.BookingNotFoundException;
+import ru.practicum.shareit.exception.ItemNotAvailableException;
+import ru.practicum.shareit.exception.ItemNotFoundException;
+import ru.practicum.shareit.exception.ItemUpdatingException;
+import ru.practicum.shareit.exception.UnknownStateException;
+import ru.practicum.shareit.exception.UserNotFoundException;
 
 import java.util.Map;
+import java.util.Objects;
 
-@RestControllerAdvice(basePackages = "ru.practicum.shareit")
 @Slf4j
+@RestControllerAdvice(basePackages = "ru.practicum.shareit")
 public class ErrorHandler {
-    @ExceptionHandler({ItemNotAvailableException.class})
+    @ExceptionHandler(ItemNotAvailableException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handle(final RuntimeException ex) {
-        log.warn("Ошибка запроса: {}", ex.getMessage());
-        return Map.of("Ошибка запроса", ex.getMessage());
+    public Map<String, String> handle(final RuntimeException exception) {
+        log.warn("Ошибка запроса: '{}'", exception.getMessage());
+        return Map.of("Ошибка запроса", exception.getMessage());
     }
 
     @ExceptionHandler(UnknownStateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleUnsupportedEx(final RuntimeException ex) {
-        return Map.of("error", "Unknown state: " + ex.getMessage());
+    public Map<String, String> handleUnsupportedException(final RuntimeException exception) {
+        return Map.of("error", "Unknown state: " + exception.getMessage());
     }
 
     @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class,
             ItemUpdatingException.class, BookingNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public Map<String, String> handleNotFoundException(final RuntimeException ex) {
-        log.warn("Ошибка запроса: {}", ex.getMessage());
-        return Map.of("Ошибка запроса", ex.getMessage());
+    public Map<String, String> handleNotFoundException(final RuntimeException exception) {
+        log.warn("Ошибка запроса: '{}'", exception.getMessage());
+        return Map.of("Ошибка запроса", exception.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public Map<String, String> handleValidationEx(final MethodArgumentNotValidException ex) {
-        log.warn("Ошибка валидации: {}", ex.getFieldError().getDefaultMessage());
-        return Map.of("Ошибка валидации", ex.getFieldError().getDefaultMessage());
+    public Map<String, String> handleValidationException(final MethodArgumentNotValidException exception) {
+        log.warn("Ошибка валидации: '{}'", Objects.requireNonNull(exception.getFieldError()).getDefaultMessage());
+        return Map.of("Ошибка валидации", Objects.requireNonNull(exception.getFieldError().getDefaultMessage()));
     }
 }

@@ -3,10 +3,11 @@ package ru.practicum.shareit.user.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.UserNotFoundException;
-import ru.practicum.shareit.user.dao.UserRepository;
-import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.dto.UserRequestDto;
+import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
 
@@ -16,42 +17,42 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
 
     @Override
+    public UserRequestDto createNewUser(UserRequestDto userRequestDto) {
+        User user = UserMapper.userRequestDtoToUser(userRequestDto);
+        return UserMapper.userToUserRequestDto(userRepository.save(user));
+    }
+
+    @Override
     public List<UserRequestDto> getAllUsers() {
-        return UserMapper.userToDto(userRepository.findAll());
-    }
-
-    @Override
-    public UserRequestDto saveUser(UserRequestDto userRequestDto) {
-        User user = UserMapper.dtoToUser(userRequestDto);
-        return UserMapper.userToDto(userRepository.save(user));
-    }
-
-    @Override
-    public UserRequestDto updateUser(UserRequestDto userRequestDto, Long id) {
-        String email = userRequestDto.getEmail();
-        String name = userRequestDto.getName();
-
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(
-                String.format("Пользователь с id: %s не обнаружен", id)));
-
-        if (email != null) {
-            user.setEmail(email);
-        }
-        if (name != null) {
-            user.setName(name);
-        }
-        return UserMapper.userToDto(userRepository.save(user));
-    }
-
-    @Override
-    public void deleteUser(Long id) {
-        userRepository.deleteById(id);
+        return UserMapper.usersToUserRequestDtoList(userRepository.findAll());
     }
 
     @Override
     public UserRequestDto getUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException(
-                String.format("Пользователь с id: %s не обнаружен", id)));
-        return UserMapper.userToDto(user);
+        User user = userRepository.findById(id).orElseThrow(()
+                -> new UserNotFoundException("Пользователь с id: '" + id + "' не найден"));
+        return UserMapper.userToUserRequestDto(user);
+    }
+
+    @Override
+    public UserRequestDto updateUserById(Long id, UserRequestDto userRequestDto) {
+        User user = userRepository.findById(id).orElseThrow(()
+                -> new UserNotFoundException("Пользователь с id: '" + id + "' не найден"));
+        userPatcher(userRequestDto, user);
+        return UserMapper.userToUserRequestDto(userRepository.save(user));
+    }
+
+    @Override
+    public void deleteUserById(Long id) {
+        userRepository.deleteById(id);
+    }
+
+    private static void userPatcher(UserRequestDto userRequestDto, User user) {
+        if (userRequestDto.getEmail() != null) {
+            user.setEmail(userRequestDto.getEmail());
+        }
+        if (userRequestDto.getName() != null) {
+            user.setName(userRequestDto.getName());
+        }
     }
 }

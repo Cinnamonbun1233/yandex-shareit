@@ -10,17 +10,19 @@ import javax.validation.constraints.Null;
 @Data
 @Builder
 public class UserRequestDto {
-    public interface NewUser {
+    public interface CreateUser {
+
     }
 
     public interface UpdateUser {
+
     }
 
-    @Null(groups = NewUser.class)
+    @Null(groups = CreateUser.class)
     private Long id;
-    @NotBlank(groups = {NewUser.class})
+    @NotBlank(groups = CreateUser.class, message = "Получен пользователь с пустым именем")
     private String name;
-    @NotBlank(groups = {NewUser.class})
-    @Email(groups = {UpdateUser.class, NewUser.class})
+    @Email(groups = {UpdateUser.class, CreateUser.class}, message = "Полуен пользователь с некорректным email")
+    @NotBlank(groups = CreateUser.class, message = "Получен пользователь с пустым email")
     private String email;
 }
