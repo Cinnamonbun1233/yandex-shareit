@@ -12,7 +12,7 @@ import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.comment.dto.CommentRequestDto;
 import ru.practicum.shareit.comment.dto.CommentResponseDto;
 import ru.practicum.shareit.exception.ItemNotFoundException;
-import ru.practicum.shareit.exception.ItemUpdatingException;
+import ru.practicum.shareit.exception.ItemUpdateException;
 import ru.practicum.shareit.exception.UserNotFoundException;
 import ru.practicum.shareit.comment.repository.CommentRepository;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -75,7 +75,7 @@ public class ItemServiceImpl implements ItemService {
         BookingShortDto lastBooking = bookingRepository.findLastBookingByItemId(itemId, cur)
                 .map(BookingMapper::toShortDto).orElse(null);
 
-        List<CommentResponseDto> comments = CommentMapper.toResponseDto(
+        List<CommentResponseDto> comments = CommentMapper.commentToCommentResponseDto(
                 commentRepository.findAllByItem_IdOrderByCreatedDesc(itemId));
 
         if (user.equals(item.getOwner())) {
@@ -116,7 +116,7 @@ public class ItemServiceImpl implements ItemService {
                     .sorted(Comparator.comparing(Booking::getStartDate, Comparator.reverseOrder()))
                     .map(BookingMapper::toShortDto)
                     .findFirst().orElse(null);
-            List<CommentResponseDto> responseComments = CommentMapper.toResponseDto(commentMap.getOrDefault(item.getId(),
+            List<CommentResponseDto> responseComments = CommentMapper.commentToCommentResponseDto(commentMap.getOrDefault(item.getId(),
                     Collections.emptyList()));
 
             result.add(ItemMapper.toItemResponseDto(item, nextBooking, lastBooking, responseComments));
@@ -138,7 +138,7 @@ public class ItemServiceImpl implements ItemService {
         userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(
                 String.format("Пользователь с id: %s не обнаружен", userId)));
 
-        return CommentMapper.toResponseDto(commentRepository.searchByText(itemId, text));
+        return CommentMapper.commentToCommentResponseDto(commentRepository.searchByText(itemId, text));
     }
 
     @Override
@@ -147,15 +147,15 @@ public class ItemServiceImpl implements ItemService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         String.format("Пользователь с id: %s не брал в аренду вещь с id: %s", userId, itemId)));
 
-        Comment comment = CommentMapper.dtoToComment(dto, booking.getBooker(), booking.getItem());
+        Comment comment = CommentMapper.commentRequestDtoToComment(dto, booking.getBooker(), booking.getItem());
 
-        return CommentMapper.toResponseDto(commentRepository.save(comment));
+        return CommentMapper.commentToCommentResponseDto(commentRepository.save(comment));
     }
 
     private void checkOwner(Item item, Long ownerId) {
         User owner = item.getOwner();
         if (owner == null || !ownerId.equals(owner.getId())) {
-            throw new ItemUpdatingException(
+            throw new ItemUpdateException(
                     String.format("Пользователь с id: %s не является владельцем вещи %s", ownerId, item.getName()));
         }
     }

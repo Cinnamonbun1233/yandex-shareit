@@ -10,16 +10,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommentMapper {
-    public static Comment dtoToComment(CommentRequestDto dto, User author, Item item) {
+    public static Comment commentRequestDtoToComment(CommentRequestDto commentRequestDto, User author, Item item) {
         return Comment.builder()
-                .text(dto.getText())
+                .text(commentRequestDto.getText())
                 .item(item)
                 .author(author)
-                .created(dto.getCreated())
+                .created(commentRequestDto.getCreated())
                 .build();
     }
 
-    public static CommentResponseDto toResponseDto(Comment comment) {
+    public static CommentResponseDto commentToCommentResponseDto(Comment comment) {
         return CommentResponseDto.builder()
                 .id(comment.getId())
                 .text(comment.getText())
@@ -28,10 +28,10 @@ public class CommentMapper {
                 .build();
     }
 
-    public static List<CommentResponseDto> toResponseDto(List<Comment> comments) {
+    public static List<CommentResponseDto> commentToCommentResponseDto(List<Comment> comments) {
         List<CommentResponseDto> dtos = new ArrayList<>();
         for (Comment comment : comments) {
-            dtos.add(toResponseDto(comment));
+            dtos.add(commentToCommentResponseDto(comment));
         }
         return dtos;
     }
