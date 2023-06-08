@@ -27,7 +27,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, Queryds
             "AND i.owner.id = ?2")
     Optional<Booking> findBookingByOwner(Long bookingId, Long ownerId);
 
-    Optional<Booking> findFirstByBookerIdAndItemIdAndEndDateBefore(Long bookerId, Long itemId, LocalDateTime cur);
+    Optional<Booking> findFirstByBooker_IdAndItem_IdAndEndDateBefore(Long bookerId, Long itemId, LocalDateTime cur);
 
     @Query(value = "SELECT * " +
             "FROM bookings AS bk " +
@@ -51,5 +51,5 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, Queryds
             "LIMIT 1", nativeQuery = true)
     Optional<Booking> findNextBookingByItemId(@Param("id") Long id, @Param("cur") LocalDateTime cur);
 
-    List<Booking> findAllByItemIdIn(List<Long> ids);
+    List<Booking> findAllByItem_IdIn(List<Long> ids);
 }

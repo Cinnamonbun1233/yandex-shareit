@@ -58,7 +58,7 @@ public class ItemServiceImpl implements ItemService {
         BookingShortDto lastBooking = bookingRepository.findLastBookingByItemId(itemId, LocalDateTime.now())
                 .map(BookingMapper::bookingToBookingShortDto).orElse(null);
         List<CommentResponseDto> commentResponseDtoList = CommentMapper.commentsToCommentResponseDtoList(
-                commentRepository.findAllByItemIdOrderByCreatedDesc(itemId));
+                commentRepository.findAllByItem_IdOrderByCreatedDesc(itemId));
 
         if (getUser(userId).equals(getItem(itemId).getOwner())) {
             return ItemMapper.itemToItemResponseDto(getItem(itemId), nextBooking, lastBooking, commentResponseDtoList);
@@ -68,11 +68,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     public List<ItemResponseDto> getItemsByOwner(Long ownerId) {
-        List<Item> itemList = itemRepository.findAllByOwnerId(ownerId);
+        List<Item> itemList = itemRepository.findAllByOwner_Id(ownerId);
         List<Long> ids = itemList.stream()
                 .map(Item::getId)
                 .collect(Collectors.toList());
-        List<Booking> bookingList = bookingRepository.findAllByItemIdIn(ids);
+        List<Booking> bookingList = bookingRepository.findAllByItem_IdIn(ids);
         List<Comment> commentList = commentRepository.findAllByItemIdIn(ids);
 
         if (!bookingList.isEmpty()) {
@@ -159,7 +159,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private Booking getBooking(Long itemId, Long userId) {
-        return bookingRepository.findFirstByBookerIdAndItemIdAndEndDateBefore(userId, itemId, LocalDateTime.now())
+        return bookingRepository.findFirstByBooker_IdAndItem_IdAndEndDateBefore(userId, itemId, LocalDateTime.now())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         ("Пользователь с id: '" + userId + "' не брал в аренду предмет с id: '" + itemId + "'")));
     }
