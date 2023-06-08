@@ -59,9 +59,9 @@ public class ItemServiceImpl implements ItemService {
         Item item = getItemRepo(itemId);
 
         BookingShortDto nextBooking = bookingRepository.findNextBookingByItemId(itemId, now)
-                .map(BookingMapper::toShortDto).orElse(null);
+                .map(BookingMapper::bookingToBookingShortDto).orElse(null);
         BookingShortDto lastBooking = bookingRepository.findLastBookingByItemId(itemId, now)
-                .map(BookingMapper::toShortDto).orElse(null);
+                .map(BookingMapper::bookingToBookingShortDto).orElse(null);
         List<CommentResponseDto> comments = CommentMapper.commentToCommentResponseDto(
                 commentRepository.findAllByItem_IdOrderByCreatedDesc(itemId));
 
@@ -176,7 +176,7 @@ public class ItemServiceImpl implements ItemService {
         return bookingMap.getOrDefault(item.getId(), Collections.emptyList()).stream()
                 .filter(b -> b.getStartDate().isBefore(now))
                 .sorted(Comparator.comparing(Booking::getStartDate, Comparator.reverseOrder()))
-                .map(BookingMapper::toShortDto)
+                .map(BookingMapper::bookingToBookingShortDto)
                 .findFirst().orElse(null);
     }
 
@@ -184,7 +184,7 @@ public class ItemServiceImpl implements ItemService {
         return bookingMap.getOrDefault(item.getId(), Collections.emptyList()).stream()
                 .filter(b -> b.getStartDate().isAfter(now))
                 .sorted(Comparator.comparing(Booking::getStartDate, Comparator.naturalOrder()))
-                .map(BookingMapper::toShortDto)
+                .map(BookingMapper::bookingToBookingShortDto)
                 .findFirst().orElse(null);
     }
 }

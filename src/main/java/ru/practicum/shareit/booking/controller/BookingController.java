@@ -19,7 +19,7 @@ public class BookingController {
 
     @PostMapping
     public BookingResponseDto addBooking(@RequestBody @Valid BookingRequestDto dto, @RequestHeader("X-Sharer-User-Id") @NotNull Long userId) {
-        return bookingServiceImpl.addBooking(dto, userId);
+        return bookingServiceImpl.createNewBooking(dto, userId);
     }
 
     @GetMapping("/{bookingId}")

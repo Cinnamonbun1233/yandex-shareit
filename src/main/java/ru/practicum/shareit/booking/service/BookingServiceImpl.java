@@ -36,7 +36,7 @@ public class BookingServiceImpl implements BookingService {
     private final UserRepository userRepository;
 
     @Transactional
-    public BookingResponseDto addBooking(BookingRequestDto dto, Long userId) {
+    public BookingResponseDto createNewBooking(BookingRequestDto dto, Long userId) {
         Item item = itemRepository.findById(dto.getItemId()).orElseThrow(() ->
                 new ItemNotFoundException(String.format("Вещь с id: %s не обнаружена", dto.getItemId())));
 
@@ -48,15 +48,15 @@ public class BookingServiceImpl implements BookingService {
         if (item.getOwner().equals(user)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Бронь для владельца вещи недоступна");
         }
-        Booking booking = BookingMapper.dtoToBooking(dto, item, user);
+        Booking booking = BookingMapper.bookingRequestDtoToBooking(dto, item, user);
 
-        return BookingMapper.toResponseDto(bookingRepository.save(booking));
+        return BookingMapper.bookingToBookingResponseDto(bookingRepository.save(booking));
     }
 
     public BookingResponseDto getBookingById(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findBooking(bookingId, userId)
                 .orElseThrow(() -> new BookingNotFoundException(String.format("Бронь с id: %s не обнаружена", bookingId)));
-        return BookingMapper.toResponseDto(booking);
+        return BookingMapper.bookingToBookingResponseDto(booking);
     }
 
     @Transactional
@@ -70,7 +70,7 @@ public class BookingServiceImpl implements BookingService {
         } else {
             booking.setStatus(BookingStatus.REJECTED);
         }
-        return BookingMapper.toResponseDto(bookingRepository.save(booking));
+        return BookingMapper.bookingToBookingResponseDto(bookingRepository.save(booking));
     }
 
     private void checkAlreadyApproved(Booking booking) {
@@ -111,7 +111,7 @@ public class BookingServiceImpl implements BookingService {
             default:
                 throw new UnknownStateException(State.UNSUPPORTED_STATUS.name());
         }
-        List<BookingResponseDto> dtos = BookingMapper.toResponseDto(
+        List<BookingResponseDto> dtos = BookingMapper.bookingToBookingResponseDto(
                 bookingRepository.findAll(ExpressionUtils.allOf(predicates),
                         Sort.by(Sort.Direction.DESC, "startDate")));
 

@@ -1,4 +1,4 @@
-package ru.practicum.shareit.booking.utils;
+package ru.practicum.shareit.booking.validation;
 
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;

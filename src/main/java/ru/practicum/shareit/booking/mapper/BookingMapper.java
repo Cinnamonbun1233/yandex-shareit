@@ -1,12 +1,12 @@
 package ru.practicum.shareit.booking.mapper;
 
-import ru.practicum.shareit.booking.status.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.booking.model.Booking;
-import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.booking.status.BookingStatus;
 import ru.practicum.shareit.item.mapper.ItemMapper;
+import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.mapper.UserMapper;
 import ru.practicum.shareit.user.model.User;
 
@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BookingMapper {
-    public static Booking dtoToBooking(BookingRequestDto bookingRequestDto, Item item, User user) {
+    public static Booking bookingRequestDtoToBooking(BookingRequestDto bookingRequestDto, Item item, User user) {
         return Booking.builder()
                 .id(bookingRequestDto.getId())
                 .startDate(bookingRequestDto.getStartDate())
@@ -25,7 +25,7 @@ public class BookingMapper {
                 .build();
     }
 
-    public static BookingResponseDto toResponseDto(Booking booking) {
+    public static BookingResponseDto bookingToBookingResponseDto(Booking booking) {
         return BookingResponseDto.builder()
                 .id(booking.getId())
                 .startDate(booking.getStartDate())
@@ -36,15 +36,15 @@ public class BookingMapper {
                 .build();
     }
 
-    public static List<BookingResponseDto> toResponseDto(Iterable<Booking> bookings) {
-        List<BookingResponseDto> dtos = new ArrayList<>();
+    public static List<BookingResponseDto> bookingToBookingResponseDto(Iterable<Booking> bookings) {
+        List<BookingResponseDto> bookingResponseDtoList = new ArrayList<>();
         for (Booking booking : bookings) {
-            dtos.add(toResponseDto(booking));
+            bookingResponseDtoList.add(bookingToBookingResponseDto(booking));
         }
-        return dtos;
+        return bookingResponseDtoList;
     }
 
-    public static BookingShortDto toShortDto(Booking booking) {
+    public static BookingShortDto bookingToBookingShortDto(Booking booking) {
         return BookingShortDto.builder()
                 .id(booking.getId())
                 .bookerId(booking.getBooker().getId())
