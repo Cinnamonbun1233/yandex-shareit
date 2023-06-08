@@ -23,7 +23,6 @@ import ru.practicum.shareit.item.dto.ItemShortResponseDto;
 import ru.practicum.shareit.item.mapper.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -85,8 +84,16 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     public ItemShortResponseDto updateItemByOwner(ItemRequestDto itemRequestDto, Long ownerId) {
-        Item item = getItem(itemRequestDto.getId());
+        User owner = userRepository.findById(ownerId)
+                .orElseThrow(() -> new UserNotFoundException(String.format("Пользователь с id: %s не обнаружен", ownerId)));
+        Long itemId = itemRequestDto.getId();
+
+        Item item = itemRepository.findById(itemId)
+                .orElseThrow(() -> new ItemNotFoundException(String.format("Вещь с id: %s не обнаружена", itemId)));
+
         checkOwner(item, ownerId);
+
+        item.setOwner(owner);
         setAttributes(itemRequestDto, item);
         return ItemMapper.itemToItemShortResponseDto(itemRepository.save(item));
     }
@@ -137,11 +144,11 @@ public class ItemServiceImpl implements ItemService {
     }
 
     private void checkOwner(Item item, Long ownerId) {
-        if (item.getOwner() == null || !ownerId.equals(item.getOwner().getId())) {
-            throw new ItemUpdatingException("Пользователь с id: '" + ownerId
-                    + "' не является владельцем предмета: '" + item.getName() + "'");
+        User owner = item.getOwner();
+        if (owner == null || !ownerId.equals(owner.getId())) {
+            throw new ItemUpdatingException(
+                    String.format("Пользователь с id: %s не является владельцем вещи %s", ownerId, item.getName()));
         }
-        item.setOwner(getUser(ownerId));
     }
 
     private User getUser(Long ownerId) {
