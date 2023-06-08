@@ -84,15 +84,12 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     public ItemShortResponseDto updateItemByOwner(ItemRequestDto itemRequestDto, Long ownerId) {
-        User owner = userRepository.findById(ownerId)
-                .orElseThrow(() -> new UserNotFoundException(String.format("Пользователь с id: %s не обнаружен", ownerId)));
+        User owner = userRepository.findById(ownerId).orElseThrow(()
+                -> new UserNotFoundException("Пользователь с id: '" + ownerId + "' не найден"));
         Long itemId = itemRequestDto.getId();
-
-        Item item = itemRepository.findById(itemId)
-                .orElseThrow(() -> new ItemNotFoundException(String.format("Вещь с id: %s не обнаружена", itemId)));
-
+        Item item = itemRepository.findById(itemId).orElseThrow(()
+                -> new ItemNotFoundException("Предмет с id: '" + itemId + "' не найден"));
         checkOwner(item, ownerId);
-
         item.setOwner(owner);
         setAttributes(itemRequestDto, item);
         return ItemMapper.itemToItemShortResponseDto(itemRepository.save(item));
