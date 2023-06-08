@@ -41,7 +41,9 @@ public class ItemServiceImpl implements ItemService {
 
     @Transactional
     public ItemShortResponseDto createNewItem(ItemRequestDto itemRequestDto, Long ownerId) {
-        Item item = ItemMapper.itemRequestDtoToItem(itemRequestDto, getUser(ownerId));
+        User owner = userRepository.findById(ownerId).orElseThrow(() -> new UserNotFoundException(
+                String.format("Пользователь с id: %s не обнаружен", ownerId)));
+        Item item = ItemMapper.itemRequestDtoToItem(itemRequestDto, owner);
         return ItemMapper.itemToItemShortResponseDto(itemRepository.save(item));
     }
 
