@@ -12,8 +12,8 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 @RestController
-@RequestMapping(path = "/bookings")
 @RequiredArgsConstructor
+@RequestMapping(path = "/bookings")
 public class BookingController {
     private final BookingService bookingService;
 
