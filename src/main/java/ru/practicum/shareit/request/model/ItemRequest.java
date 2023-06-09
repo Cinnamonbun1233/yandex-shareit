@@ -4,7 +4,6 @@ import lombok.*;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
 /**
@@ -24,7 +23,6 @@ public class ItemRequest {
     private long id;
     @Column(nullable = false)
     private String name;
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private User requestor;
