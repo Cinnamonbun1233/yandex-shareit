@@ -36,7 +36,7 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
-    @Transactional
+    @Override
     public BookingResponseDto createNewBooking(BookingRequestDto bookingRequestDto, Long userId) {
         Item item = getItemRepo(bookingRequestDto);
 

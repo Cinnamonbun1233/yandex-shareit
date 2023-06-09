@@ -1,7 +1,8 @@
 package ru.practicum.shareit.user.dto;
 
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.shareit.user.validation.CreateUser;
 import ru.practicum.shareit.user.validation.UpdateUser;
 
@@ -9,7 +10,8 @@ import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
 
-@Data
+@Getter
+@Setter
 @Builder
 public class UserRequestDto {
     @Null(groups = {CreateUser.class})

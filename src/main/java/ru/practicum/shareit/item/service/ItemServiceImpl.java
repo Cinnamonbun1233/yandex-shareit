@@ -39,7 +39,7 @@ public class ItemServiceImpl implements ItemService {
     private final BookingRepository bookingRepository;
     private final CommentRepository commentRepository;
 
-    @Transactional
+    @Override
     public ItemShortDto createNewItem(ItemRequestDto itemRequestDto, Long ownerId) {
         User user = getUserRepo(ownerId);
         Item item = ItemMapper.itemRequestDtoToItem(itemRequestDto, user);
