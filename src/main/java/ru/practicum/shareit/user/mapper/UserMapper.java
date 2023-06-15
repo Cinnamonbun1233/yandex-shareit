@@ -1,24 +1,40 @@
 package ru.practicum.shareit.user.mapper;
 
-import lombok.experimental.UtilityClass;
-import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.dto.UserRequestDto;
+import ru.practicum.shareit.user.dto.UserShortDto;
 import ru.practicum.shareit.user.model.User;
 
-@UtilityClass
+import java.util.ArrayList;
+import java.util.List;
+
 public class UserMapper {
-    public static User dtoToUser(UserDto userDto) {
-        return User.builder()
-                .name(userDto.getName())
-                .email(userDto.getEmail())
-                .id(userDto.getId())
+    public static UserRequestDto userToUserRequestDto(User user) {
+        return UserRequestDto.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail())
                 .build();
     }
 
-    public static UserDto userToDto(User user) {
-        return UserDto.builder()
-                .name(user.getName())
-                .email(user.getEmail())
+    public static List<UserRequestDto> userToUserRequestDto(Iterable<User> users) {
+        List<UserRequestDto> userRequestDtoList = new ArrayList<>();
+        for (User user : users) {
+            userRequestDtoList.add(userToUserRequestDto(user));
+        }
+        return userRequestDtoList;
+    }
+
+    public static UserShortDto userToUserShortDto(User user) {
+        return UserShortDto.builder()
                 .id(user.getId())
+                .name(user.getName())
+                .build();
+    }
+
+    public static User userRequestDtoToUser(UserRequestDto userRequestDto) {
+        return User.builder()
+                .name(userRequestDto.getName())
+                .email(userRequestDto.getEmail())
                 .build();
     }
 }
