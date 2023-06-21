@@ -15,17 +15,17 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import java.util.List;
 
-@Validated
 @RestController
+@Validated
 @RequiredArgsConstructor
 @RequestMapping(path = "/bookings")
 public class BookingController {
-    private final BookingService bookingServiceImpl;
+    private final BookingService bookingService;
 
     @PostMapping
     public BookingResponseDto createNewBooking(@RequestBody @Valid BookingRequestDto bookingRequestDto,
                                                @RequestHeader("X-Sharer-User-Id") @NotNull Long userId) {
-        return bookingServiceImpl.createNewBooking(bookingRequestDto, userId);
+        return bookingService.createNewBooking(bookingRequestDto, userId);
     }
 
     @GetMapping
@@ -33,7 +33,7 @@ public class BookingController {
                                                        @RequestHeader("X-Sharer-User-Id") @NotNull Long userId,
                                                        @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int from,
                                                        @RequestParam(required = false, defaultValue = "10") @Positive int size) {
-        return bookingServiceImpl.getAllUserBookings(GetBookingRequest.of(state, userId, false, from, size));
+        return bookingService.getAllUserBookings(GetBookingRequest.of(state, userId, false, from, size));
     }
 
     @GetMapping("/owner")
@@ -41,19 +41,19 @@ public class BookingController {
                                                            @RequestHeader("X-Sharer-User-Id") @NotNull Long userId,
                                                            @RequestParam(required = false, defaultValue = "0") @PositiveOrZero int from,
                                                            @RequestParam(required = false, defaultValue = "10") @Positive int size) {
-        return bookingServiceImpl.getAllUserBookings(GetBookingRequest.of(state, userId, true, from, size));
+        return bookingService.getAllUserBookings(GetBookingRequest.of(state, userId, true, from, size));
     }
 
     @GetMapping("/{bookingId}")
     public BookingResponseDto getBookingById(@PathVariable Long bookingId,
                                              @RequestHeader("X-Sharer-User-Id") @NotNull Long userId) {
-        return bookingServiceImpl.getBookingById(bookingId, userId);
+        return bookingService.getBookingById(bookingId, userId);
     }
 
     @PatchMapping("/{bookingId}")
     public BookingResponseDto approveBooking(@PathVariable Long bookingId,
                                              @RequestParam Boolean approved,
                                              @RequestHeader("X-Sharer-User-Id") @NotNull Long ownerId) {
-        return bookingServiceImpl.approveBooking(bookingId, approved, ownerId);
+        return bookingService.approveBooking(bookingId, approved, ownerId);
     }
 }

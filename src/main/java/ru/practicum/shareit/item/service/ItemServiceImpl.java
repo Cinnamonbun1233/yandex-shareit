@@ -92,7 +92,7 @@ public class ItemServiceImpl implements ItemService {
         Pageable page = PageRequest.of(from > 0 ? from / size : 0, size);
         List<Item> items = itemRepository.findAllByOwner_Id(ownerId, page);
         List<Long> ids = items.stream().map(Item::getId).collect(Collectors.toList());
-        List<Booking> bookings = bookingRepository.findAllByItem_IdIn(ids);
+        List<Booking> bookings = bookingRepository.findAllByItemIdIn(ids);
         List<Comment> comments = commentRepository.findAllByItemIdIn(ids);
 
         if (!bookings.isEmpty()) {
@@ -152,7 +152,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public CommentResponseDto createNewComment(Long itemId, CommentRequestDto dto, Long userId) {
-        Booking booking = bookingRepository.findFirstByBooker_IdAndItem_IdAndEndDateBefore(userId, itemId, LocalDateTime.now())
+        Booking booking = bookingRepository.findFirstByBookerIdAndItemIdAndEndDateBefore(userId, itemId, LocalDateTime.now())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
                         String.format("Пользователь с id: %s не брал в аренду вещь с id: %s", userId, itemId)));
         Comment comment = CommentMapper.commentRequestDtoToComment(dto, booking.getBooker(), booking.getItem());

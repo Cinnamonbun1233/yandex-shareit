@@ -23,8 +23,8 @@ import static org.hamcrest.Matchers.*;
 class ItemMapperTest {
     private static ItemRequestDto getItemRequestDto() {
         return ItemRequestDto.builder()
-                .name("brush")
-                .description("some brush")
+                .name("Грабли")
+                .description("Для уборки листвы")
                 .available(true)
                 .requestId(1L)
                 .build();
@@ -32,7 +32,7 @@ class ItemMapperTest {
 
     private static RequestItem getRequest(User requestor) {
         return RequestItem.builder()
-                .description("some description")
+                .description("Для уборки листвы")
                 .requestor(requestor)
                 .created(LocalDateTime.now())
                 .build();
@@ -43,7 +43,7 @@ class ItemMapperTest {
                 .id(1L)
                 .author(author)
                 .item(item)
-                .text("very good")
+                .text("Отличные грабли")
                 .created(LocalDateTime.now())
                 .build();
     }
@@ -61,7 +61,7 @@ class ItemMapperTest {
     private static User getUser(Long id, String email) {
         return User.builder()
                 .id(id)
-                .name("Alexandr")
+                .name("Дима")
                 .email(email)
                 .build();
     }
@@ -69,8 +69,8 @@ class ItemMapperTest {
     private static Item getItem(User owner) {
         return Item.builder()
                 .id(1L)
-                .name("brush")
-                .description("some brush")
+                .name("Грабли")
+                .description("Для уборки листвы")
                 .available(true)
                 .owner(owner)
                 .build();
@@ -78,12 +78,11 @@ class ItemMapperTest {
 
     @Test
     void itemToDto() {
-        // given
-        User user = getUser(1L, "kex@mail.ru");
+        User user = getUser(1L, "dima@yandex.ru");
         Item item = getItem(user);
-        // when
+
         ItemRequestDto result = ItemMapper.itemToItemRequestDto(item);
-        // then
+
         assertThat(result, notNullValue());
         assertThat(result.getId(), equalTo(item.getId()));
         assertThat(result.getName(), equalTo(item.getName()));
@@ -91,12 +90,11 @@ class ItemMapperTest {
 
     @Test
     void toItemShort() {
-        // given
-        User user = getUser(1L, "kex@mail.ru");
+        User user = getUser(1L, "dima@yandex.ru");
         Item item = getItem(user);
-        // when
+
         ItemShortResponseDto result = ItemMapper.itemToItemShortResponseDto(item);
-        // then
+
         assertThat(result, notNullValue());
         assertThat(result.getId(), equalTo(item.getId()));
         assertThat(result.getName(), equalTo(item.getName()));
@@ -107,18 +105,17 @@ class ItemMapperTest {
 
     @Test
     void toItemResponseDto() {
-        // given
         LocalDateTime now = LocalDateTime.now();
-        User owner = getUser(1L, "alex@mai.ru");
-        User booker = getUser(2L, "alexa@mai.ru");
+        User owner = getUser(1L, "dima@yandex.ru");
+        User booker = getUser(2L, "fima@yandex.ru");
         Item item = getItem(owner);
         BookingShortResponseDto nextBooking = BookingMapper.bookingToBookingShortResponseDto(getBooking(item, booker));
         BookingShortResponseDto lastBooking = BookingMapper.bookingToBookingShortResponseDto(getBooking(item, booker));
         lastBooking.setStart(now.minusDays(2));
         lastBooking.setEnd(now.minusDays(1));
-        // when
+
         ItemResponseDto result = ItemMapper.itemToItemResponseDto(item, nextBooking, lastBooking);
-        // then
+
         assertThat(result, notNullValue());
         assertThat(result.getLastBooking(), equalTo(lastBooking));
         assertThat(result.getNextBooking(), equalTo(nextBooking));
@@ -130,20 +127,19 @@ class ItemMapperTest {
 
     @Test
     void toItemResponseDtoWithComments() {
-        // given
         LocalDateTime now = LocalDateTime.now();
-        User owner = getUser(1L, "alex@mai.ru");
-        User booker = getUser(2L, "alexa@mai.ru");
-        User author = getUser(3L, "kexa@mail.ru");
+        User owner = getUser(1L, "dima@yandex.ru");
+        User booker = getUser(2L, "fima@yandex.ru");
+        User author = getUser(3L, "sima@yandex.ru");
         Item item = getItem(owner);
         BookingShortResponseDto nextBooking = BookingMapper.bookingToBookingShortResponseDto(getBooking(item, booker));
         BookingShortResponseDto lastBooking = BookingMapper.bookingToBookingShortResponseDto(getBooking(item, booker));
         lastBooking.setStart(now.minusDays(2));
         lastBooking.setEnd(now.minusDays(1));
         List<CommentResponseDto> comments = List.of(CommentMapper.commentToCommentResponseDto(getComment(1L, author, item)));
-        // when
+
         ItemResponseDto result = ItemMapper.itemToItemResponseDto(item, nextBooking, lastBooking, comments);
-        // then
+
         assertThat(result, notNullValue());
         assertThat(result.getLastBooking(), equalTo(lastBooking));
         assertThat(result.getNextBooking(), equalTo(nextBooking));
@@ -155,14 +151,13 @@ class ItemMapperTest {
 
     @Test
     void dtoToItem() {
-        // given
         ItemRequestDto dto = getItemRequestDto();
-        User owner = getUser(1L, "alex@mai.ru");
-        User requestor = getUser(2L, "alexas@mai.ru");
+        User owner = getUser(1L, "dima@yandex.ru");
+        User requestor = getUser(2L, "fima@yandex.ru");
         RequestItem request = getRequest(requestor);
-        // when
+
         Item result = ItemMapper.itemRequestDtoToItem(dto, owner, request);
-        // then
+
         assertThat(result, notNullValue());
         assertThat(result.getName(), equalTo(dto.getName()));
         assertThat(result.getRequest(), equalTo(request));

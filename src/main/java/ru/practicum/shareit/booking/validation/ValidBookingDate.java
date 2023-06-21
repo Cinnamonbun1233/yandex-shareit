@@ -11,7 +11,7 @@ import java.lang.annotation.Target;
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ValidBookingDate {
-    String message() default "Дата начала не может быть позже или равна дате окончания";
+    String message() default "Дата начала бронирования не может быть позже или равна дате окончания бронирования";
 
     Class<?>[] groups() default {};
 

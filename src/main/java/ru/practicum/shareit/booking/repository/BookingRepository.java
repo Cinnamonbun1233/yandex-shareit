@@ -12,9 +12,9 @@ import java.util.Optional;
 
 public interface BookingRepository extends JpaRepository<Booking, Long>, QuerydslPredicateExecutor<Booking> {
 
-    Optional<Booking> findFirstByBooker_IdAndItem_IdAndEndDateBefore(Long bookerId, Long itemId, LocalDateTime cur);
+    Optional<Booking> findFirstByBookerIdAndItemIdAndEndDateBefore(Long bookerId, Long itemId, LocalDateTime cur);
 
-    List<Booking> findAllByItem_IdIn(List<Long> ids);
+    List<Booking> findAllByItemIdIn(List<Long> ids);
 
     @Query("SELECT b " +
             "FROM Booking AS b " +
@@ -36,20 +36,20 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, Queryds
             "JOIN items AS i ON bk.item_id=i.id " +
             "JOIN users AS u ON bk.booker_id=u.id " +
             "WHERE bk.item_id=(:id) " +
-            "AND bk.start_date <= :cur " +
+            "AND bk.start_date <= :now " +
             "AND bk.status NOT IN('REJECTED', 'CANCELLED') " +
             "ORDER BY bk.start_date DESC " +
             "LIMIT 1", nativeQuery = true)
-    Optional<Booking> findLastBookingByItemId(@Param("id") Long id, @Param("cur") LocalDateTime cur);
+    Optional<Booking> findLastBookingByItemId(@Param("id") Long id, @Param("now") LocalDateTime now);
 
     @Query(value = "SELECT * " +
             "FROM bookings AS bk " +
             "JOIN items as i ON bk.item_id=i.id " +
             "JOIN users as u ON bk.booker_id=u.id " +
             "WHERE bk.item_id=(:id) " +
-            "AND bk.start_date > :cur " +
+            "AND bk.start_date > :now " +
             "AND bk.status NOT IN('REJECTED', 'CANCELLED') " +
             "ORDER BY bk.start_date ASC " +
             "LIMIT 1", nativeQuery = true)
-    Optional<Booking> findNextBookingByItemId(@Param("id") Long id, @Param("cur") LocalDateTime cur);
+    Optional<Booking> findNextBookingByItemId(@Param("id") Long id, @Param("now") LocalDateTime now);
 }

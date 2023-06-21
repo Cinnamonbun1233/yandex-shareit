@@ -23,11 +23,12 @@ import static org.hamcrest.Matchers.*;
 @DataJpaTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class CommentRepositoryTest {
-    private final TestEntityManager em;
-    private final CommentRepository repository;
+    private final TestEntityManager testEntityManager;
+    private final CommentRepository commentRepository;
+
     private static Comment getComment(User author, Item item) {
         return Comment.builder()
-                .text("very good item")
+                .text("Отличные грабли")
                 .item(item)
                 .author(author)
                 .created(LocalDateTime.now())
@@ -36,183 +37,170 @@ class CommentRepositoryTest {
 
     private static User getUser(String email) {
         return User.builder()
-                .name("Alexandr")
+                .name("Дима")
                 .email(email)
                 .build();
     }
 
     private static Item getItem(User owner) {
         return Item.builder()
-                .name("brush")
-                .description("some brush")
+                .name("Грабли")
+                .description("Грабли для уборки листвы")
                 .available(true)
                 .owner(owner)
                 .build();
     }
 
     @Test
-    void searchByText_shouldReturnCommentsWhenSearchRequestIsFound() {
-        // given
-        User owner = getUser("alex@mail.ru");
-        User author = getUser("alexas@mail.ru");
-        em.persist(owner);
-        em.persist(author);
+    void searchByTextShouldReturnCommentsWhenSearchRequestIsFound() {
+        User owner = getUser("dima@yandex.ru");
+        User author = getUser("fima@yandex.ru");
+        testEntityManager.persist(owner);
+        testEntityManager.persist(author);
         Item item = getItem(owner);
-        em.persist(item);
+        testEntityManager.persist(item);
         Comment comment = getComment(author, item);
-        em.persist(comment);
+        testEntityManager.persist(comment);
         Pageable page = PageRequest.of(0, 10);
 
-        // when
-        List<Comment> comments = repository.searchByText(item.getId(), "good item", page);
-        // then
+        List<Comment> comments = commentRepository.searchByText(item.getId(), "Отличные грабли", page);
+
         assertThat(comments, hasSize(1));
         assertThat(comments, hasItem(comment));
     }
 
     @Test
-    void searchByText_shouldReturnEmptyListWhenSearchRequestIsNotFound() {
-        // given
-        User owner = getUser("alex@mail.ru");
-        User author = getUser("alexas@mail.ru");
-        em.persist(owner);
-        em.persist(author);
+    void searchByTextShouldReturnEmptyListWhenSearchRequestIsNotFound() {
+        User owner = getUser("dima@yandex.ru");
+        User author = getUser("fima@yandex.ru");
+        testEntityManager.persist(owner);
+        testEntityManager.persist(author);
         Item item = getItem(owner);
-        em.persist(item);
+        testEntityManager.persist(item);
         Comment comment = getComment(author, item);
-        em.persist(comment);
+        testEntityManager.persist(comment);
         Pageable page = PageRequest.of(0, 10);
-        // when
-        List<Comment> comments = repository.searchByText(item.getId(), "hj", page);
-        // then
+
+        List<Comment> comments = commentRepository.searchByText(item.getId(), "hj", page);
+
         assertThat(comments, empty());
     }
 
     @Test
-    void findAllByItem_IdOrderByCreatedDesc_shouldReturnListOfComments() {
-        // given
-        User owner = getUser("alex@mail.ru");
-        User author = getUser("alexas@mail.ru");
-        em.persist(owner);
-        em.persist(author);
+    void findAllByItemIdOrderByCreatedDescShouldReturnListOfComments() {
+        User owner = getUser("dima@yandex.ru");
+        User author = getUser("fima@yandex.ru");
+        testEntityManager.persist(owner);
+        testEntityManager.persist(author);
         Item item = getItem(owner);
-        em.persist(item);
+        testEntityManager.persist(item);
         Comment comment = getComment(author, item);
-        em.persist(comment);
-        // when
-        List<Comment> comments = repository.findAllByItem_IdOrderByCreatedDesc(item.getId());
-        // then
+        testEntityManager.persist(comment);
+
+        List<Comment> comments = commentRepository.findAllByItem_IdOrderByCreatedDesc(item.getId());
+
         assertThat(comments, hasSize(1));
         assertThat(comments, hasItem(comment));
     }
 
     @Test
-    void findAllByItem_IdOrderByCreatedDesc_shouldReturnEmptyListWhenCommentsNotFound() {
-        // given
-        User owner = getUser("alex@mail.ru");
-        User author = getUser("alexas@mail.ru");
-        em.persist(owner);
-        em.persist(author);
+    void findAllByItemIdOrderByCreatedDescShouldReturnEmptyListWhenCommentsNotFound() {
+        User owner = getUser("dima@yandex.ru");
+        User author = getUser("fima@yandex.ru");
+        testEntityManager.persist(owner);
+        testEntityManager.persist(author);
         Item item = getItem(owner);
-        em.persist(item);
+        testEntityManager.persist(item);
         Comment comment = getComment(author, item);
-        em.persist(comment);
-        // when
-        List<Comment> comments = repository.findAllByItem_IdOrderByCreatedDesc(10L);
-        // then
+        testEntityManager.persist(comment);
+
+        List<Comment> comments = commentRepository.findAllByItem_IdOrderByCreatedDesc(10L);
+
         assertThat(comments, empty());
     }
 
     @Test
-    void findAll_QueryDsl_shouldReturnListOfCommentsWhenQueryIsCorrect() {
-        // given
-        User owner = getUser("alex@mail.ru");
-        User author = getUser("alexas@mail.ru");
-        em.persist(owner);
-        em.persist(author);
+    void findAllQueryDslShouldReturnListOfCommentsWhenQueryIsCorrect() {
+        User owner = getUser("dima@yandex.ru");
+        User author = getUser("fima@yandex.ru");
+        testEntityManager.persist(owner);
+        testEntityManager.persist(author);
         Item item = getItem(owner);
-        em.persist(item);
+        testEntityManager.persist(item);
         Comment comment = getComment(author, item);
-        em.persist(comment);
+        testEntityManager.persist(comment);
         Pageable page = PageRequest.of(0, 10);
 
-        // when
-        List<Comment> comments = repository.findAll(QComment.comment.id.eq(comment.getId()), page).getContent();
-        // then
+        List<Comment> comments = commentRepository.findAll(QComment.comment.id.eq(comment.getId()), page).getContent();
+
         assertThat(comments, hasSize(1));
         assertThat(comments, hasItem(comment));
     }
 
     @Test
-    void findAll_QueryDsl_shouldReturnListOfCommentsWhenQueryIsNotCorrect() {
-        // given
-        User owner = getUser("alex@mail.ru");
-        User author = getUser("alexas@mail.ru");
-        em.persist(owner);
-        em.persist(author);
+    void findAllQueryDslShouldReturnListOfCommentsWhenQueryIsNotCorrect() {
+        User owner = getUser("dima@yandex.ru");
+        User author = getUser("fima@yandex.ru");
+        testEntityManager.persist(owner);
+        testEntityManager.persist(author);
         Item item = getItem(owner);
-        em.persist(item);
+        testEntityManager.persist(item);
         Comment comment = getComment(author, item);
-        em.persist(comment);
+        testEntityManager.persist(comment);
         Pageable page = PageRequest.of(0, 10);
 
-        // when
-        List<Comment> comments = repository.findAll(
+        List<Comment> comments = commentRepository.findAll(
                 QComment.comment.text.containsIgnoreCase("never found string"), page).getContent();
-        // then
+
         assertThat(comments, empty());
     }
 
     @Test
-    void findAllByItemIdIn_whenIdsExistAndCorrect() {
-        // given
-        User owner = getUser("alex@mail.ru");
-        User author = getUser("alexas@mail.ru");
-        em.persist(owner);
-        em.persist(author);
+    void findAllByItemIdInWhenIdsExistAndCorrect() {
+        User owner = getUser("dima@yandex.ru");
+        User author = getUser("fima@yandex.ru");
+        testEntityManager.persist(owner);
+        testEntityManager.persist(author);
         Item item = getItem(owner);
-        em.persist(item);
+        testEntityManager.persist(item);
         Comment comment = getComment(author, item);
-        em.persist(comment);
+        testEntityManager.persist(comment);
         Pageable page = PageRequest.of(0, 10);
         List<Long> ids = List.of(item.getId());
 
-        // when
-        List<Comment> comments = repository.findAllByItemIdIn(ids);
-        // then
+        List<Comment> comments = commentRepository.findAllByItemIdIn(ids);
+
         assertThat(comments, hasSize(1));
         assertThat(comments, hasItem(comment));
     }
 
     @Test
-    void findAllByItemIdIn_shouldReturnEmptyListWhenArgumentIsEmptyList() {
-        // given
-        User owner = getUser("alex@mail.ru");
-        User author = getUser("alexas@mail.ru");
-        em.persist(owner);
-        em.persist(author);
+    void findAllByItemIdInShouldReturnEmptyListWhenArgumentIsEmptyList() {
+        User owner = getUser("dima@yandex.ru");
+        User author = getUser("fima@yandex.ru");
+        testEntityManager.persist(owner);
+        testEntityManager.persist(author);
         Item item = getItem(owner);
-        em.persist(item);
+        testEntityManager.persist(item);
         Comment comment = getComment(author, item);
-        em.persist(comment);
-        // when
-        List<Comment> comments = repository.findAllByItemIdIn(Collections.emptyList());
-        // then
+        testEntityManager.persist(comment);
+
+        List<Comment> comments = commentRepository.findAllByItemIdIn(Collections.emptyList());
+
         assertThat(comments, empty());
     }
 
     @Test
-    void findAllByItemIdIn_shouldNotThrowExceptionWhenArgumentIsEmptyList() {
-        // given
-        User owner = getUser("alex@mail.ru");
-        User author = getUser("alexas@mail.ru");
-        em.persist(owner);
-        em.persist(author);
+    void findAllByItemIdInShouldNotThrowExceptionWhenArgumentIsEmptyList() {
+        User owner = getUser("dima@yandex.ru");
+        User author = getUser("fima@yandex.ru");
+        testEntityManager.persist(owner);
+        testEntityManager.persist(author);
         Item item = getItem(owner);
-        em.persist(item);
+        testEntityManager.persist(item);
         Comment comment = getComment(author, item);
-        em.persist(comment);
-        // when + then
-        Assertions.assertDoesNotThrow(() -> repository.findAllByItemIdIn(Collections.emptyList()));
+        testEntityManager.persist(comment);
+
+        Assertions.assertDoesNotThrow(() -> commentRepository.findAllByItemIdIn(Collections.emptyList()));
     }
 }

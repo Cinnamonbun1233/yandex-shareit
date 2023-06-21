@@ -18,36 +18,35 @@ import static org.hamcrest.Matchers.*;
 @DataJpaTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class ItemRepositoryTest {
-    private final TestEntityManager em;
-    private final ItemRepository repository;
+    private final TestEntityManager testEntityManager;
+    private final ItemRepository itemRepository;
 
     private static User getUser(String email) {
         return User.builder()
-                .name("Alexandr")
+                .name("Дима")
                 .email(email)
                 .build();
     }
 
     private static Item getItem(User owner) {
         return Item.builder()
-                .name("brush")
-                .description("some brush")
+                .name("Грабли")
+                .description("Для уборки листьев")
                 .available(true)
                 .owner(owner)
                 .build();
     }
 
     @Test
-    void searchItemsByNameOrDescription_shouldReturnResult_WhenSearchRequestFound() {
-        // given
-        User owner = getUser("alex@mail.ru");
-        em.persist(owner);
+    void searchItemsByNameOrDescriptionShouldReturnResultWhenSearchRequestFound() {
+        User owner = getUser("dima@yandex.ru");
+        testEntityManager.persist(owner);
         Item item = getItem(owner);
-        em.persist(item);
+        testEntityManager.persist(item);
         Pageable page = PageRequest.of(0, 10);
-        // when
-        List<Item> result = repository.searchItemsByNameOrDescription("br", page);
-        // then
+
+        List<Item> result = itemRepository.searchItemsByNameOrDescription("Гр", page);
+
         assertThat(result, hasSize(1));
         assertThat(result, hasItem(allOf(
                 hasProperty("name", equalTo(item.getName())),
@@ -56,45 +55,41 @@ class ItemRepositoryTest {
     }
 
     @Test
-    void searchItemsByNameOrDescription_shouldReturnEmptyResult_WhenSearchRequestNotFound() {
-        // given
-        User owner = getUser("alex@mail.ru");
-        em.persist(owner);
+    void searchItemsByNameOrDescriptionShouldReturnEmptyResultWhenSearchRequestNotFound() {
+        User owner = getUser("dima@yandex.ru");
+        testEntityManager.persist(owner);
         Item item = getItem(owner);
-        em.persist(item);
+        testEntityManager.persist(item);
         Pageable page = PageRequest.of(0, 10);
-        // when
-        List<Item> result = repository.searchItemsByNameOrDescription("txt", page);
-        // then
+        List<Item> result = itemRepository.searchItemsByNameOrDescription("ливстьев", page);
+
         assertThat(result, empty());
     }
 
     @Test
-    void findAllByOwner_Id_shouldReturnItemList_WhenIdIsCorrect() {
-        // given
-        User owner = getUser("alex@mail.ru");
-        em.persist(owner);
+    void findAllByOwnerIdShouldReturnItemListWhenIdIsCorrect() {
+        User owner = getUser("dima@yandex.ru");
+        testEntityManager.persist(owner);
         Item item = getItem(owner);
-        em.persist(item);
-        // when
-        List<Item> result = repository.findAllByOwner_Id(owner.getId(), Pageable.unpaged());
-        // then
+        testEntityManager.persist(item);
+
+        List<Item> result = itemRepository.findAllByOwner_Id(owner.getId(), Pageable.unpaged());
+
         assertThat(result, hasItem(allOf(
                 hasProperty("id", equalTo(item.getId()))
         )));
     }
 
     @Test
-    void findAllByOwner_Id_ShouldReturnEmptyList_WhenIdIsInCorrect() {
-        // given
-        User owner = getUser("alex@mail.ru");
-        em.persist(owner);
+    void findAllByOwnerIdShouldReturnEmptyListWhenIdIsInCorrect() {
+        User owner = getUser("dima@yandex.ru");
+        testEntityManager.persist(owner);
         Item item = getItem(owner);
-        em.persist(item);
+        testEntityManager.persist(item);
         Long incorrectId = owner.getId() + 10;
-        // when
-        List<Item> result = repository.findAllByOwner_Id(incorrectId, Pageable.unpaged());
-        // then
+
+        List<Item> result = itemRepository.findAllByOwner_Id(incorrectId, Pageable.unpaged());
+
         assertThat(result, empty());
     }
 }

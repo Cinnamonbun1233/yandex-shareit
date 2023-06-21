@@ -53,7 +53,7 @@ class ItemServiceImplTest {
     private static CommentRequestDto getCommentDto(User booker, Item item) {
         return CommentRequestDto.builder()
                 .id(1L)
-                .text("some text")
+                .text("Отличные грабли")
                 .item(item)
                 .author(booker)
                 .created(LocalDateTime.now())
@@ -63,8 +63,8 @@ class ItemServiceImplTest {
     private static ItemRequestDto getItemRequestDto() {
         return ItemRequestDto.builder()
                 .id(1L)
-                .name("item")
-                .description("some Item")
+                .name("Грабли")
+                .description("Для уборки листьев")
                 .available(true)
                 .requestId(1L)
                 .build();
@@ -73,8 +73,8 @@ class ItemServiceImplTest {
     private static Item getItem(User owner) {
         return Item.builder()
                 .id(1L)
-                .name("brush")
-                .description("some brush")
+                .name("Грабли")
+                .description("Для уборки листьев")
                 .available(true)
                 .owner(owner)
                 .build();
@@ -82,14 +82,14 @@ class ItemServiceImplTest {
 
     private static User getUser(String email) {
         return User.builder()
-                .name("Alexandr")
+                .name("Дима")
                 .email(email)
                 .build();
     }
 
     private static RequestItem getRequest(User user) {
         return RequestItem.builder()
-                .description("some description")
+                .description("Для уборки листьев")
                 .requestor(user)
                 .created(LocalDateTime.now())
                 .build();
@@ -108,7 +108,7 @@ class ItemServiceImplTest {
     private static List<Comment> getComments(User user, Item item) {
         return List.of(Comment.builder()
                 .id(1L)
-                .text("some text")
+                .text("Отличные грабли")
                 .item(item)
                 .author(user)
                 .created(LocalDateTime.now())
@@ -116,7 +116,7 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void addNewItem_shouldThrowUserNotFoundEx() {
+    void addNewItemShouldThrowUserNotFoundEx() {
         ItemRequestDto requestDto = getItemRequestDto();
 
         when(userRepository.findById(anyLong()))
@@ -127,14 +127,13 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void addNewItem_shouldReturnNotNullRequestId() {
-        // given
+    void addNewItemShouldReturnNotNullRequestId() {
         ItemRequestDto requestDto = getItemRequestDto();
-        User owner = getUser("some@mail.ru");
-        User user = getUser("some2@mail.ru");
+        User owner = getUser("dima@yandex.ru");
+        User user = getUser("fima@yandex.ru");
         RequestItem request = getRequest(user);
         Item item = getItem(owner);
-        // when
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(owner));
         when(requestItemRepository.findById(anyLong()))
@@ -143,7 +142,7 @@ class ItemServiceImplTest {
                 .thenReturn(item);
 
         ItemShortResponseDto result = itemService.createNewItem(requestDto, 1L);
-        // then
+
         assertThat(result.getRequestId(), equalTo(request.getId()));
         verify(userRepository, times(1)).findById(anyLong());
         verify(requestItemRepository, times(1)).findById(anyLong());
@@ -152,68 +151,64 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void updateItem_shouldThrowItemUpdatingEx() {
-        // given
+    void updateItemShouldThrowItemUpdatingEx() {
         ItemRequestDto requestDto = getItemRequestDto();
-        User owner = getUser("some@mail.ru");
+        User owner = getUser("dima@yandex.ru");
         owner.setId(1L);
-        User user = getUser("some2@mail.ru");
+        User user = getUser("fima@yandex.ru");
         user.setId(2L);
         Item item = getItem(owner);
-        // when
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
         when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.of(item));
-        // then
+
         assertThrows(ItemUpdatingException.class,
                 () -> itemService.updateItemById(requestDto, 2L));
     }
 
     @Test
-    void updateItem_shouldThrowUserNotFoundEx() {
-        // given
+    void updateItemShouldThrowUserNotFoundEx() {
         ItemRequestDto requestDto = getItemRequestDto();
-        // when
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
-        // then
+
         assertThrows(UserNotFoundException.class,
                 () -> itemService.updateItemById(requestDto, 2L));
     }
 
     @Test
-    void updateItem_shouldThrowItemNotFoundEx() {
-        // given
+    void updateItemShouldThrowItemNotFoundEx() {
         ItemRequestDto requestDto = getItemRequestDto();
-        User user = getUser("some@mail.ru");
+        User user = getUser("dima@yandex.ru");
         user.setId(1L);
-        // when
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
         when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
-        // then
+
         assertThrows(ItemNotFoundException.class,
                 () -> itemService.updateItemById(requestDto, 2L));
     }
 
     @Test
-    void updateItem_shouldSetAttributes() {
-        // given
+    void updateItemShouldSetAttributes() {
         ItemRequestDto requestDto = ItemRequestDto.builder()
                 .id(1L)
-                .name("item")
-                .description("some Item")
+                .name("Грабли")
+                .description("Для уборки листьев")
                 .available(false)
                 .requestId(1L)
                 .build();
-        User owner = getUser("some@mail.ru");
+        User owner = getUser("dima@yandex.ru");
         owner.setId(1L);
-        User user = getUser("some2@mail.ru");
+        User user = getUser("fima@yandex.ru");
         user.setId(2L);
         Item item = getItem(owner);
-        // when
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(owner));
         when(itemRepository.findById(anyLong()))
@@ -222,23 +217,22 @@ class ItemServiceImplTest {
                 .thenReturn(item);
 
         ItemShortResponseDto result = itemService.updateItemById(requestDto, owner.getId());
-        // then
+
         assertThat(result.getName(), equalTo(requestDto.getName()));
         assertThat(result.getDescription(), equalTo(requestDto.getDescription()));
         assertFalse(result.getAvailable());
     }
 
     @Test
-    void getItemById_shouldReturnItemWithNoBookings() {
-        // given
-        User owner = getUser("some@mail.ru");
+    void getItemByIdShouldReturnItemWithNoBookings() {
+        User owner = getUser("dima@yandex.ru");
         owner.setId(1L);
-        User user = getUser("some2@mail.ru");
+        User user = getUser("fima@yandex.ru");
         user.setId(2L);
         Item item = getItem(owner);
         Booking booking = getBooking(item, user);
         List<Comment> comments = getComments(user, item);
-        // when
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
         when(itemRepository.findById(anyLong()))
@@ -251,7 +245,7 @@ class ItemServiceImplTest {
                 .thenReturn(comments);
 
         ItemResponseDto result = itemService.getItemById(2L, 1L);
-        // then
+
         assertThat(result.getNextBooking(), nullValue());
         assertThat(result.getLastBooking(), nullValue());
         verify(userRepository, times(1)).findById(anyLong());
@@ -263,39 +257,36 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void getItemById_shouldThrowUserNotFound() {
-        // when
+    void getItemByIdShouldThrowUserNotFound() {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
-        // then
+
         assertThrows(UserNotFoundException.class, () -> itemService.getItemById(1L, 1L));
     }
 
     @Test
-    void getItemById_shouldThrowItemNotFound() {
-        // given
-        User user = getUser("some@mail.ru");
+    void getItemByIdShouldThrowItemNotFound() {
+        User user = getUser("dima@yandex.ru");
         user.setId(1L);
-        // when
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
         when(itemRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
-        // then
+
         assertThrows(ItemNotFoundException.class, () -> itemService.getItemById(1L, 1L));
     }
 
     @Test
-    void getItemById_shouldReturnItemWithBookings() {
-        // given
-        User owner = getUser("some@mail.ru");
+    void getItemByIdShouldReturnItemWithBookings() {
+        User owner = getUser("dima@yandex.ru");
         owner.setId(1L);
-        User user = getUser("some2@mail.ru");
+        User user = getUser("fima@yandex.ru");
         user.setId(2L);
         Item item = getItem(owner);
         Booking booking = getBooking(item, user);
         List<Comment> comments = getComments(user, item);
-        // when
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(owner));
         when(itemRepository.findById(anyLong()))
@@ -308,7 +299,7 @@ class ItemServiceImplTest {
                 .thenReturn(comments);
 
         ItemResponseDto result = itemService.getItemById(1L, 1L);
-        // then
+
         assertThat(result.getNextBooking(), notNullValue());
         assertThat(result.getLastBooking(), notNullValue());
         verify(userRepository, times(1)).findById(anyLong());
@@ -320,11 +311,10 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void getItemsByOwner_shouldReturnItemsWithNotNullBookings() {
-        // given
-        User owner = getUser("some@mail.ru");
+    void getItemsByOwnerShouldReturnItemsWithNotNullBookings() {
+        User owner = getUser("dima@yandex.ru");
         owner.setId(1L);
-        User user = getUser("some2@mail.ru");
+        User user = getUser("fima@yandex.ru");
         user.setId(2L);
         Item item = getItem(owner);
         List<Item> items = List.of(item);
@@ -335,34 +325,32 @@ class ItemServiceImplTest {
         List<Booking> bookings = List.of(firstBook, secondBook);
         List<Comment> comments = getComments(user, item);
 
-        // when
         when(itemRepository.findAllByOwner_Id(anyLong(), any()))
                 .thenReturn(items);
-        when(bookingRepository.findAllByItem_IdIn(anyList()))
+        when(bookingRepository.findAllByItemIdIn(anyList()))
                 .thenReturn(bookings);
         when(commentRepository.findAllByItemIdIn(anyList()))
                 .thenReturn(comments);
 
         List<ItemResponseDto> result = itemService.getAllItemsById(1L, 0, 10);
-        // then
+
         assertThat(result, hasSize(1));
         assertThat(result, hasItem(allOf(
                 hasProperty("nextBooking", notNullValue()),
                 hasProperty("lastBooking", notNullValue())
         )));
         verify(itemRepository, times(1)).findAllByOwner_Id(anyLong(), any());
-        verify(bookingRepository, times(1)).findAllByItem_IdIn(anyList());
+        verify(bookingRepository, times(1)).findAllByItemIdIn(anyList());
         verify(commentRepository, times(1)).findAllByItemIdIn(anyList());
         verifyNoMoreInteractions(itemRepository, bookingRepository, commentRepository);
 
     }
 
     @Test
-    void getItemsByOwner_shouldReturnItemsWithNullBookings() {
-        // given
-        User owner = getUser("some@mail.ru");
+    void getItemsByOwnerShouldReturnItemsWithNullBookings() {
+        User owner = getUser("dima@yandex.ru");
         owner.setId(1L);
-        User user = getUser("some2@mail.ru");
+        User user = getUser("fima@yandex.ru");
         user.setId(2L);
         Item item = getItem(owner);
         List<Item> items = List.of(item);
@@ -370,54 +358,51 @@ class ItemServiceImplTest {
         List<Booking> bookings = Collections.emptyList();
         List<Comment> comments = getComments(user, item);
 
-        // when
         when(itemRepository.findAllByOwner_Id(anyLong(), any()))
                 .thenReturn(items);
-        when(bookingRepository.findAllByItem_IdIn(anyList()))
+        when(bookingRepository.findAllByItemIdIn(anyList()))
                 .thenReturn(bookings);
         when(commentRepository.findAllByItemIdIn(anyList()))
                 .thenReturn(comments);
 
         List<ItemResponseDto> result = itemService.getAllItemsById(1L, 0, 10);
-        // then
+
         assertThat(result, hasSize(1));
         assertThat(result, hasItem(allOf(
                 hasProperty("nextBooking", nullValue()),
                 hasProperty("lastBooking", nullValue())
         )));
         verify(itemRepository, times(1)).findAllByOwner_Id(anyLong(), any());
-        verify(bookingRepository, times(1)).findAllByItem_IdIn(anyList());
+        verify(bookingRepository, times(1)).findAllByItemIdIn(anyList());
         verify(commentRepository, times(1)).findAllByItemIdIn(anyList());
         verifyNoMoreInteractions(itemRepository, bookingRepository, commentRepository);
     }
 
     @Test
-    void search_shouldReturnEmptyResult() {
-        // given
+    void searchShouldReturnEmptyResult() {
         GetSearchItem search = GetSearchItem.of("", 1L, 0, 10);
-        // when
+
         List<ItemRequestDto> result = itemService.search(search);
-        // then
+
         assertThat(result, empty());
     }
 
     @Test
-    void search_shouldReturnItem() {
-        // given
-        User owner = getUser("some@mail.ru");
+    void searchShouldReturnItem() {
+        User owner = getUser("dima@yandex.ru");
         owner.setId(1L);
-        User user = getUser("some2@mail.ru");
+        User user = getUser("fima@yandex.ru");
         user.setId(2L);
         Item item = getItem(owner);
         List<Item> items = List.of(item);
-        GetSearchItem search = GetSearchItem.of("brush", 1L, 0, 10);
-        // when
+        GetSearchItem search = GetSearchItem.of("Грабли", 1L, 0, 10);
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
         when(itemRepository.searchItemsByNameOrDescription(anyString(), any()))
                 .thenReturn(items);
         List<ItemRequestDto> result = itemService.search(search);
-        // then
+
         assertThat(result, hasSize(1));
         assertThat(result, hasItem(allOf(
                 hasProperty("id", equalTo(item.getId())),
@@ -427,56 +412,52 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void search_shouldThrowUserNotFoundEx() {
-        // given
-        GetSearchItem search = GetSearchItem.of("brush", 1L, 0, 10);
-        // when
+    void searchShouldThrowUserNotFoundEx() {
+        GetSearchItem search = GetSearchItem.of("Грабли", 1L, 0, 10);
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
-        // then
+
         assertThrows(UserNotFoundException.class, () -> itemService.search(search));
     }
 
     @Test
-    void searchCommentsByText_shouldReturnEmptyComments() {
-        // given
+    void searchCommentsByTextShouldReturnEmptyComments() {
         GetSearchItem search = GetSearchItem.of("", 1L, 1L, 0, 10);
-        // when
+
         List<CommentResponseDto> result = itemService.searchCommentsByText(search);
-        // then
+
         assertThat(result, empty());
     }
 
     @Test
-    void searchCommentsByText_shouldThrowUserNotFound() {
-        // given
-        GetSearchItem search = GetSearchItem.of("some", 1L, 1L, 0, 10);
-        // when
+    void searchCommentsByTextShouldThrowUserNotFound() {
+        GetSearchItem search = GetSearchItem.of("ливстьев", 1L, 1L, 0, 10);
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
-        // then
+
         assertThrows(UserNotFoundException.class, () -> itemService.searchCommentsByText(search));
     }
 
     @Test
-    void searchCommentsByText_ShouldReturnNotEmptyResult() {
-        // given
-        User owner = getUser("some@mail.ru");
+    void searchCommentsByTextShouldReturnNotEmptyResult() {
+        User owner = getUser("dima@yandex.ru");
         owner.setId(1L);
-        User user = getUser("some2@mail.ru");
+        User user = getUser("fima@yandex.ru");
         user.setId(2L);
         Item item = getItem(owner);
 
         List<Comment> comments = getComments(user, item);
         GetSearchItem search = GetSearchItem.of("not empty search", 1L, 1L, 0, 10);
-        // when
+
         when(commentRepository.searchByText(anyLong(), anyString(), any()))
                 .thenReturn(comments);
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
 
         List<CommentResponseDto> result = itemService.searchCommentsByText(search);
-        // then
+
         assertThat(result, not(empty()));
         verify(commentRepository, times(1)).searchByText(anyLong(), anyString(), any());
         verify(userRepository, times(1)).findById(anyLong());
@@ -484,38 +465,36 @@ class ItemServiceImplTest {
     }
 
     @Test
-    void addComment_ShouldThrowExWhenUserNeverBookedItem() {
-        // given
-        User booker = getUser("booker@mail.ru");
-        User owner = getUser("some@mail.ru");
+    void addCommentShouldThrowExWhenUserNeverBookedItem() {
+        User booker = getUser("fima@yandex.ru");
+        User owner = getUser("dima@yandex.ru");
         Item item = getItem(owner);
         CommentRequestDto commentDto = getCommentDto(booker, item);
-        // when
-        when(bookingRepository.findFirstByBooker_IdAndItem_IdAndEndDateBefore(anyLong(), anyLong(), any()))
+
+        when(bookingRepository.findFirstByBookerIdAndItemIdAndEndDateBefore(anyLong(), anyLong(), any()))
                 .thenReturn(Optional.empty());
-        // then
+
         assertThrows(ResponseStatusException.class, () -> itemService.createNewComment(item.getId(), commentDto, 1L));
         verifyNoInteractions(commentRepository);
     }
 
     @Test
-    void addComment_shouldReturnComment() {
-        // given
-        User booker = getUser("booker@mail.ru");
+    void addCommentShouldReturnComment() {
+        User booker = getUser("fima@yandex.ru");
         booker.setId(1L);
-        User owner = getUser("some@mail.ru");
+        User owner = getUser("dima@yandex.ru");
         owner.setId(2L);
         Item item = getItem(owner);
         Booking booking = getBooking(item, booker);
         CommentRequestDto commentDto = getCommentDto(booker, item);
         Comment comment = getComments(booker, item).get(0);
-        // when
-        when(bookingRepository.findFirstByBooker_IdAndItem_IdAndEndDateBefore(anyLong(), anyLong(), any()))
+
+        when(bookingRepository.findFirstByBookerIdAndItemIdAndEndDateBefore(anyLong(), anyLong(), any()))
                 .thenReturn(Optional.of(booking));
         when(commentRepository.save(any()))
                 .thenReturn(comment);
         CommentResponseDto result = itemService.createNewComment(item.getId(), commentDto, booker.getId());
-        // then
+
         assertThat(result, notNullValue());
         assertThat(result.getId(), equalTo(comment.getId()));
         assertThat(result.getText(), equalTo(comment.getText()));

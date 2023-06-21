@@ -42,17 +42,18 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingResponseDto createNewBooking(BookingRequestDto bookingRequestDto, Long userId) {
         Item item = itemRepository.findById(bookingRequestDto.getItemId())
-                .orElseThrow(() -> new ItemNotFoundException(String.format("Вещь с id: %s не обнаружена", bookingRequestDto.getItemId())));
+                .orElseThrow(() -> new ItemNotFoundException(String.format("Предмет с id: '%s' не найден",
+                        bookingRequestDto.getItemId())));
 
         if (!item.getAvailable()) {
-            throw new ItemNotAvailableException(String.format("Вещь с id: %s недоступна для брони", item.getId()));
+            throw new ItemNotAvailableException(String.format("Предмет с id: '%s' недоступен для бронирования", item.getId()));
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new UserNotFoundException("Пользователь с id: '" + userId + "' не найден"));
+                .orElseThrow(() -> new UserNotFoundException(String.format("Пользователь с id: '%s' не найден", userId)));
 
         if (item.getOwner().equals(user)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Бронь для владельца вещи недоступна");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Бронирование для владельца предмета недоступно");
         }
 
         Booking booking = BookingMapper.bookingRequestDtoToBooking(bookingRequestDto, item, user);
@@ -61,14 +62,15 @@ public class BookingServiceImpl implements BookingService {
 
     public BookingResponseDto getBookingById(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findBooking(bookingId, userId)
-                .orElseThrow(() -> new BookingNotFoundException(String.format("Бронь с id: %s не обнаружена", bookingId)));
+                .orElseThrow(() -> new BookingNotFoundException(String.format("Бронирование с id: '%s' не обнаружено", bookingId)));
         return BookingMapper.bookingToBookingResponseDto(booking);
     }
 
     @Transactional
     public BookingResponseDto approveBooking(Long bookingId, Boolean approved, Long ownerId) {
         Booking booking = bookingRepository.findBookingByOwner(bookingId, ownerId)
-                .orElseThrow(() -> new BookingNotFoundException(String.format("Бронь с id: %s для владельца с id: %s не обнаружена", bookingId, ownerId)));
+                .orElseThrow(() -> new BookingNotFoundException(String.format(
+                        "Бронирование с id: '%s' для владельца предмета с id: '%s' не найдено", bookingId, ownerId)));
         checkAlreadyApproved(booking);
 
         if (approved) {
@@ -85,7 +87,7 @@ public class BookingServiceImpl implements BookingService {
 
         if (booking.getStatus() != null && (status == BookingStatus.APPROVED || status == BookingStatus.REJECTED)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Невозможно изменить статус аренды после подтверждения");
+                    "Невозможно изменить статус аренды предмета после подтверждения бронирования");
         }
     }
 
@@ -128,7 +130,8 @@ public class BookingServiceImpl implements BookingService {
                 bookingRepository.findAll(Objects.requireNonNull(ExpressionUtils.allOf(predicates)), page));
 
         if (dtos.isEmpty())
-            throw new BookingNotFoundException(String.format("Пользователь с id : %s не имеет брони", getBookingRequest.getUserId()));
+            throw new BookingNotFoundException(String.format(
+                    "Пользователь с id: '%s' не имеет бронирования", getBookingRequest.getUserId()));
 
         return dtos;
     }

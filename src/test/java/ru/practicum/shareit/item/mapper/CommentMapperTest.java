@@ -15,7 +15,7 @@ import static org.hamcrest.Matchers.*;
 class CommentMapperTest {
     private static CommentRequestDto getCommentRequestDto() {
         return CommentRequestDto.builder()
-                .text("very good")
+                .text("Отличные грабли")
                 .build();
     }
 
@@ -24,7 +24,7 @@ class CommentMapperTest {
                 .id(1L)
                 .author(author)
                 .item(item)
-                .text("very good")
+                .text("Отличные грабли")
                 .created(LocalDateTime.now())
                 .build();
     }
@@ -32,7 +32,7 @@ class CommentMapperTest {
     private static User getUser(Long id, String email) {
         return User.builder()
                 .id(id)
-                .name("Alexandr")
+                .name("Дима")
                 .email(email)
                 .build();
     }
@@ -40,8 +40,8 @@ class CommentMapperTest {
     private static Item getItem(User owner) {
         return Item.builder()
                 .id(1L)
-                .name("brush")
-                .description("some brush")
+                .name("Грабли")
+                .description("Для уборки листьев")
                 .available(true)
                 .owner(owner)
                 .build();
@@ -49,29 +49,28 @@ class CommentMapperTest {
 
     @Test
     void dtoToComment() {
-        User user = getUser(1L, "kex@mail.ru");
-        User author = getUser(2L, "kexa@mail.ru");
+        User user = getUser(1L, "dima@yandex.ru");
+        User author = getUser(2L, "fima@yandex.ru");
         Item item = getItem(user);
-        CommentRequestDto requestDto = getCommentRequestDto();
+        CommentRequestDto commentRequestDto = getCommentRequestDto();
 
-        Comment result = CommentMapper.commentRequestDtoToComment(requestDto, author, item);
+        Comment result = CommentMapper.commentRequestDtoToComment(commentRequestDto, author, item);
         assertThat(result, notNullValue());
         assertThat(result, instanceOf(Comment.class));
-        assertThat(result.getText(), equalTo(requestDto.getText()));
+        assertThat(result.getText(), equalTo(commentRequestDto.getText()));
         assertThat(result.getItem(), equalTo(item));
         assertThat(result.getAuthor(), equalTo(author));
     }
 
     @Test
     void toResponseDto() {
-        // given
-        User user = getUser(1L, "kex@mail.ru");
-        User author = getUser(2L, "kexa@mail.ru");
+        User user = getUser(1L, "dima@yandex.ru");
+        User author = getUser(2L, "fima@yandex.ru");
         Item item = getItem(user);
         Comment comment = getComment(1L, author, item);
-        // when
+
         CommentResponseDto result = CommentMapper.commentToCommentResponseDto(comment);
-        // then
+
         assertThat(result, notNullValue());
         assertThat(result.getId(), equalTo(comment.getId()));
         assertThat(result.getText(), equalTo(comment.getText()));

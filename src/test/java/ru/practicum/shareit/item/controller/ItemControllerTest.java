@@ -36,23 +36,23 @@ class ItemControllerTest {
 
     private static CommentRequestDto getCommentRequestDto() {
         return CommentRequestDto.builder()
-                .text("very good")
+                .text("Отличные грабли")
                 .build();
     }
 
     private static CommentResponseDto getCommentResponseDto() {
         return CommentResponseDto.builder()
                 .id(1L)
-                .text("very good")
-                .authorName("Alex")
+                .text("Отличные грабли")
+                .authorName("Дима")
                 .created(LocalDateTime.now())
                 .build();
     }
 
     private static ItemRequestDto getItemRequestDto() {
         return ItemRequestDto.builder()
-                .name("item")
-                .description("some Item")
+                .name("Грабли")
+                .description("Для уборки листвы")
                 .available(true)
                 .requestId(1L)
                 .build();
@@ -61,8 +61,8 @@ class ItemControllerTest {
     private static ItemShortResponseDto getItemShortDto() {
         return ItemShortResponseDto.builder()
                 .id(1L)
-                .name("item")
-                .description("some item")
+                .name("Грабли")
+                .description("Для уборки листвы")
                 .available(true)
                 .requestId(1L)
                 .build();
@@ -80,8 +80,8 @@ class ItemControllerTest {
     private static ItemResponseDto getItemResponseDto(LocalDateTime now) {
         return ItemResponseDto.builder()
                 .id(1L)
-                .name("brush")
-                .description("good brush")
+                .name("Грабли")
+                .description("Для уборки листвы")
                 .available(true)
                 .nextBooking(getBookingShort(now.plusMinutes(1), now.plusDays(1)))
                 .lastBooking(getBookingShort(now.minusDays(1), now.minusHours(1)))
@@ -91,16 +91,15 @@ class ItemControllerTest {
 
     @Test
     @SneakyThrows
-    void addItem_shouldAddItem_whenRequestIsCorrect() {
-        // given
-        ItemRequestDto dto = getItemRequestDto();
+    void addItemShouldAddItemWhenRequestIsCorrect() {
+        ItemRequestDto itemRequestDto = getItemRequestDto();
         ItemShortResponseDto item = getItemShortDto();
-        // when
+
         when(itemService.createNewItem(any(), anyLong()))
                 .thenReturn(item);
 
         mvc.perform(post("/items")
-                        .content(mapper.writeValueAsString(dto))
+                        .content(mapper.writeValueAsString(itemRequestDto))
                         .characterEncoding(StandardCharsets.UTF_8)
                         .header("X-Sharer-User-Id", "1")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -111,7 +110,7 @@ class ItemControllerTest {
                         content().contentType(MediaType.APPLICATION_JSON),
                         jsonPath("$.id", is(item.getId()), Long.class),
                         jsonPath("$.name", equalTo(item.getName())),
-                        jsonPath("$.description", containsString("some item")),
+                        jsonPath("$.description", containsString("Для уборки листвы")),
                         jsonPath("$.available", equalTo(item.getAvailable())),
                         jsonPath("$.requestId", notNullValue())
                 );
@@ -119,11 +118,10 @@ class ItemControllerTest {
 
     @Test
     @SneakyThrows
-    void addItem_shouldReturnBadRequest_UserIdHeaderIsNotPresent() {
-        // given
+    void addItemShouldReturnBadRequestUserIdHeaderIsNotPresent() {
         ItemRequestDto dto = getItemRequestDto();
         ItemShortResponseDto item = getItemShortDto();
-        // when
+
         when(itemService.createNewItem(any(), anyLong()))
                 .thenReturn(item);
 
@@ -132,18 +130,17 @@ class ItemControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                // then
+
                 .andExpect(status().isBadRequest());
         verify(itemService, never()).updateItemById(any(), anyLong());
     }
 
     @Test
     @SneakyThrows
-    void updateItem_shouldUpdateItem_whenRequestIsCorrect() {
-        // given
+    void updateItemShouldUpdateItemWhenRequestIsCorrect() {
         ItemRequestDto dto = getItemRequestDto();
         ItemShortResponseDto item = getItemShortDto();
-        // when
+
         when(itemService.updateItemById(any(), anyLong()))
                 .thenReturn(item);
 
@@ -153,13 +150,13 @@ class ItemControllerTest {
                         .header("X-Sharer-User-Id", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                // then
+
                 .andExpectAll(
                         status().isOk(),
                         content().contentType(MediaType.APPLICATION_JSON),
                         jsonPath("$.id", is(item.getId()), Long.class),
                         jsonPath("$.name", equalTo(item.getName())),
-                        jsonPath("$.description", containsString("some item")),
+                        jsonPath("$.description", containsString("Для уборки листвы")),
                         jsonPath("$.available", equalTo(item.getAvailable())),
                         jsonPath("$.requestId", notNullValue())
                 );
@@ -169,11 +166,10 @@ class ItemControllerTest {
 
     @Test
     @SneakyThrows
-    void updateItem_shouldReturnBadRequest_UserIdHeaderIsNotPresent() {
-        // given
+    void updateItemShouldReturnBadRequestUserIdHeaderIsNotPresent() {
         ItemRequestDto dto = getItemRequestDto();
         ItemShortResponseDto item = getItemShortDto();
-        // when
+
         when(itemService.updateItemById(any(), anyLong()))
                 .thenReturn(item);
 
@@ -182,14 +178,14 @@ class ItemControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                // then
+
                 .andExpect(status().isBadRequest());
         verify(itemService, never()).updateItemById(any(), anyLong());
     }
 
     @Test
     @SneakyThrows
-    void getItemById_shouldReturnItem_whenRequestIsCorrect() {
+    void getItemByIdShouldReturnItemWhenRequestIsCorrect() {
         LocalDateTime now = LocalDateTime.now();
         ItemResponseDto responseDto = getItemResponseDto(now);
 
@@ -202,8 +198,8 @@ class ItemControllerTest {
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.id", is(responseDto.getId()), Long.class),
-                        jsonPath("$.name", containsString("brush")),
-                        jsonPath("$.description", containsString("good brush")),
+                        jsonPath("$.name", containsString("Грабли")),
+                        jsonPath("$.description", containsString("Для уборки листвы")),
                         jsonPath("$.available", equalTo(true)),
                         jsonPath("$.nextBooking", notNullValue()),
                         jsonPath("$.lastBooking", notNullValue()),
@@ -213,7 +209,7 @@ class ItemControllerTest {
 
     @Test
     @SneakyThrows
-    void getItemById_shouldReturnBadRequest_whenPathVariableIsNull() {
+    void getItemByIdShouldReturnBadRequestWhenPathVariableIsNull() {
         LocalDateTime now = LocalDateTime.now();
         ItemResponseDto responseDto = getItemResponseDto(now);
 
@@ -245,21 +241,21 @@ class ItemControllerTest {
                         status().isOk(),
                         jsonPath("$", hasSize(1)),
                         jsonPath("$[0].id", is(responseDto.getId()), Long.class),
-                        jsonPath("$[0].name", containsString("brush")),
+                        jsonPath("$[0].name", containsString("Грабли")),
                         jsonPath("$[0].comments", empty())
                 );
     }
 
     @Test
     @SneakyThrows
-    void search_shouldReturnItems_whenSearchRequestIsCorrect() {
+    void searchShouldReturnItemsWhenSearchRequestIsCorrect() {
         ItemRequestDto requestDto = getItemRequestDto();
 
         when(itemService.search(any()))
                 .thenReturn(List.of(requestDto));
 
         mvc.perform(get("/items/search")
-                        .param("text", "bRusH")
+                        .param("text", "Грабли")
                         .param("from", "0")
                         .param("size", "10")
                         .header("X-Sharer-User-Id", "1")
@@ -268,17 +264,17 @@ class ItemControllerTest {
                         status().isOk(),
                         jsonPath("$", hasSize(1)),
                         jsonPath("$[0].requestId", is(requestDto.getRequestId()), Long.class),
-                        jsonPath("$[0].name", containsString("item"))
+                        jsonPath("$[0].name", containsString("Грабли"))
                 );
     }
 
     @Test
     @SneakyThrows
-    void searchCommentsByText_shouldReturnComments_whenSearchRequestIsCorrect() {
-        CommentResponseDto comment = getCommentResponseDto();
+    void searchCommentsByTextShouldReturnCommentsWhenSearchRequestIsCorrect() {
+        CommentResponseDto commentResponseDto = getCommentResponseDto();
 
         when(itemService.searchCommentsByText(any()))
-                .thenReturn(List.of(comment));
+                .thenReturn(List.of(commentResponseDto));
 
         mvc.perform(get("/items/1/comment/search")
                         .param("text", "goOD")
@@ -289,48 +285,48 @@ class ItemControllerTest {
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$", hasSize(1)),
-                        jsonPath("$[0].id", is(comment.getId()), Long.class),
-                        jsonPath("$[0].text", containsString("very good"))
+                        jsonPath("$[0].id", is(commentResponseDto.getId()), Long.class),
+                        jsonPath("$[0].text", containsString("Отличные грабли"))
                 );
     }
 
     @Test
     @SneakyThrows
-    void addComment_shouldAddComment_whenRequestIsCorrect() {
-        CommentResponseDto comment = getCommentResponseDto();
-        CommentRequestDto requestDto = getCommentRequestDto();
+    void addCommentShouldAddCommentWhenRequestIsCorrect() {
+        CommentResponseDto commentResponseDto = getCommentResponseDto();
+        CommentRequestDto commentRequestDto = getCommentRequestDto();
 
         when(itemService.createNewComment(anyLong(), any(), anyLong()))
-                .thenReturn(comment);
+                .thenReturn(commentResponseDto);
 
         mvc.perform(post("/items/1/comment")
                         .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(requestDto))
+                        .content(mapper.writeValueAsString(commentRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpectAll(
                         status().isOk(),
-                        jsonPath("$.text", containsString("very good")),
-                        jsonPath("$.id", is(comment.getId()), Long.class),
-                        jsonPath("$.authorName", containsString("Alex")),
+                        jsonPath("$.text", containsString("Отличные грабли")),
+                        jsonPath("$.id", is(commentResponseDto.getId()), Long.class),
+                        jsonPath("$.authorName", containsString("Дима")),
                         jsonPath("$.created", notNullValue())
                 );
     }
 
     @Test
     @SneakyThrows
-    void addComment_shouldReturnBadRequest_whenTextIsBlank() {
-        CommentResponseDto comment = getCommentResponseDto();
-        CommentRequestDto requestDto = getCommentRequestDto();
-        requestDto.setText("");
+    void addCommentShouldReturnBadRequestWhenTextIsBlank() {
+        CommentResponseDto commentResponseDto = getCommentResponseDto();
+        CommentRequestDto commentRequestDto = getCommentRequestDto();
+        commentRequestDto.setText("");
 
         when(itemService.createNewComment(anyLong(), any(), anyLong()))
-                .thenReturn(comment);
+                .thenReturn(commentResponseDto);
 
         mvc.perform(post("/items/1/comment")
                         .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(requestDto))
+                        .content(mapper.writeValueAsString(commentRequestDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
         verify(itemService, never()).createNewComment(anyLong(), any(), anyLong());
