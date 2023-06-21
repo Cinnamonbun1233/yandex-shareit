@@ -1,4 +1,4 @@
-package ru.practicum.shareit.exception.handler;
+package ru.practicum.shareit.exception.error;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -21,17 +21,17 @@ public class ErrorHandler {
         return Map.of("Ошибка запроса", exception.getMessage());
     }
 
-    @ExceptionHandler({UnknownStateException.class})
+    @ExceptionHandler(UnknownStateException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public Map<String, String> handleUnsupportedException(final RuntimeException exception) {
         return Map.of("error", "Unknown state: " + exception.getMessage());
     }
 
     @ExceptionHandler({UserNotFoundException.class, ItemNotFoundException.class,
-            ItemUpdateException.class, BookingNotFoundException.class})
+            ItemUpdatingException.class, BookingNotFoundException.class, RequestNotFoundException.class})
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public Map<String, String> handleNotFoundException(final RuntimeException exception) {
-        log.warn("Ошибка запроса: {}", exception.getMessage());
+        log.warn("Ошибка запроса: '{}'", exception.getMessage());
         return Map.of("Ошибка запроса", exception.getMessage());
     }
 

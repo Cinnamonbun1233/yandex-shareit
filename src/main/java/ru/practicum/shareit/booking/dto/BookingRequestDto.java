@@ -3,8 +3,7 @@ package ru.practicum.shareit.booking.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import ru.practicum.shareit.booking.status.BookingStatus;
 import ru.practicum.shareit.booking.validation.DependentValidations;
 import ru.practicum.shareit.booking.validation.ValidBookingDate;
@@ -15,14 +14,9 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-bookings.
- */
-
-@Getter
-@Setter
+@Data
 @Builder
-@ValidBookingDate(groups = {DependentValidations.class})
+@ValidBookingDate(groups = DependentValidations.class)
 @GroupSequence({BookingRequestDto.class, DependentValidations.class})
 public class BookingRequestDto {
     @Null

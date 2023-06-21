@@ -2,7 +2,7 @@ package ru.practicum.shareit.booking.mapper;
 
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
-import ru.practicum.shareit.booking.dto.BookingShortDto;
+import ru.practicum.shareit.booking.dto.BookingShortResponseDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.status.BookingStatus;
 import ru.practicum.shareit.item.mapper.ItemMapper;
@@ -30,13 +30,13 @@ public class BookingMapper {
                 .id(booking.getId())
                 .startDate(booking.getStartDate())
                 .endDate(booking.getEndDate())
-                .item(ItemMapper.itemToItemShortDto(booking.getItem()))
-                .booker(UserMapper.userToUserShortDto(booking.getBooker()))
+                .item(ItemMapper.itemToItemShortResponseDto(booking.getItem()))
+                .booker(UserMapper.userToUserShortResponseDto(booking.getBooker()))
                 .status(booking.getStatus())
                 .build();
     }
 
-    public static List<BookingResponseDto> bookingToBookingResponseDto(Iterable<Booking> bookings) {
+    public static List<BookingResponseDto> bookingsToBookingResponseDtoList(Iterable<Booking> bookings) {
         List<BookingResponseDto> bookingResponseDtoList = new ArrayList<>();
         for (Booking booking : bookings) {
             bookingResponseDtoList.add(bookingToBookingResponseDto(booking));
@@ -44,8 +44,8 @@ public class BookingMapper {
         return bookingResponseDtoList;
     }
 
-    public static BookingShortDto bookingToBookingShortDto(Booking booking) {
-        return BookingShortDto.builder()
+    public static BookingShortResponseDto bookingToBookingShortResponseDto(Booking booking) {
+        return BookingShortResponseDto.builder()
                 .id(booking.getId())
                 .bookerId(booking.getBooker().getId())
                 .start(booking.getStartDate())

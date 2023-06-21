@@ -1,8 +1,7 @@
-package ru.practicum.shareit.comment.dto;
+package ru.practicum.shareit.item.dto;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import lombok.extern.jackson.Jacksonized;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
@@ -11,8 +10,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 
-@Getter
-@Setter
+@Data
 @Builder
 @Jacksonized
 public class CommentRequestDto {

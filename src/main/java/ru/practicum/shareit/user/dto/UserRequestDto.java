@@ -14,7 +14,7 @@ import javax.validation.constraints.Null;
 @Setter
 @Builder
 public class UserRequestDto {
-    @Null(groups = {CreateUser.class})
+    @Null(groups = CreateUser.class)
     private Long id;
     @NotBlank(groups = {CreateUser.class})
     private String name;

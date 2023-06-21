@@ -1,8 +1,8 @@
-package ru.practicum.shareit.comment.mapper;
+package ru.practicum.shareit.item.mapper;
 
-import ru.practicum.shareit.comment.dto.CommentRequestDto;
-import ru.practicum.shareit.comment.dto.CommentResponseDto;
-import ru.practicum.shareit.comment.model.Comment;
+import ru.practicum.shareit.item.dto.CommentRequestDto;
+import ru.practicum.shareit.item.dto.CommentResponseDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.model.User;
 
@@ -28,11 +28,11 @@ public class CommentMapper {
                 .build();
     }
 
-    public static List<CommentResponseDto> commentToCommentResponseDto(List<Comment> comments) {
-        List<CommentResponseDto> dtos = new ArrayList<>();
+    public static List<CommentResponseDto> commentsToCommentResponseDtoList(List<Comment> comments) {
+        List<CommentResponseDto> commentResponseDtoList = new ArrayList<>();
         for (Comment comment : comments) {
-            dtos.add(commentToCommentResponseDto(comment));
+            commentResponseDtoList.add(commentToCommentResponseDto(comment));
         }
-        return dtos;
+        return commentResponseDtoList;
     }
 }

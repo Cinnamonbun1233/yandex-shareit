@@ -1,5 +1,5 @@
 package ru.practicum.shareit.item.validation;
 
-public interface NewItem {
+public interface CreateItem {
 
 }

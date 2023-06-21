@@ -1,11 +1,12 @@
 package ru.practicum.shareit.item.mapper;
 
-import ru.practicum.shareit.booking.dto.BookingShortDto;
-import ru.practicum.shareit.comment.dto.CommentResponseDto;
+import ru.practicum.shareit.booking.dto.BookingShortResponseDto;
+import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.dto.ItemResponseDto;
-import ru.practicum.shareit.item.dto.ItemShortDto;
+import ru.practicum.shareit.item.dto.ItemShortResponseDto;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.request.model.RequestItem;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static List<ItemRequestDto> itemToItemRequestDto(Iterable<Item> items) {
+    public static List<ItemRequestDto> itemsToItemRequestDtoList(Iterable<Item> items) {
         List<ItemRequestDto> itemRequestDtoList = new ArrayList<>();
         for (Item item : items) {
             itemRequestDtoList.add(itemToItemRequestDto(item));
@@ -29,16 +30,25 @@ public class ItemMapper {
         return itemRequestDtoList;
     }
 
-    public static ItemShortDto itemToItemShortDto(Item item) {
-        return ItemShortDto.builder()
+    public static ItemShortResponseDto itemToItemShortResponseDto(Item item) {
+        return ItemShortResponseDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
                 .available(item.getAvailable())
+                .requestId(item.getRequest() != null ? item.getRequest().getId() : null)
                 .build();
     }
 
-    public static ItemResponseDto itemToItemResponseDto(Item item, BookingShortDto next, BookingShortDto last) {
+    public static List<ItemShortResponseDto> itemsToItemShortResponseDtoList(List<Item> items) {
+        List<ItemShortResponseDto> itemShortResponseDtoList = new ArrayList<>();
+        for (Item item : items) {
+            itemShortResponseDtoList.add(itemToItemShortResponseDto(item));
+        }
+        return itemShortResponseDtoList;
+    }
+
+    public static ItemResponseDto itemToItemResponseDto(Item item, BookingShortResponseDto next, BookingShortResponseDto last) {
         return ItemResponseDto.builder()
                 .id(item.getId())
                 .name(item.getName())
@@ -50,8 +60,8 @@ public class ItemMapper {
     }
 
     public static ItemResponseDto itemToItemResponseDto(Item item,
-                                                        BookingShortDto next,
-                                                        BookingShortDto last,
+                                                        BookingShortResponseDto next,
+                                                        BookingShortResponseDto last,
                                                         List<CommentResponseDto> comments) {
         return ItemResponseDto.builder()
                 .id(item.getId())
@@ -64,7 +74,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public static List<ItemResponseDto> itemToItemResponseDto(List<Item> items) {
+    public static List<ItemResponseDto> itemsToItemResponseDtoList(List<Item> items) {
         List<ItemResponseDto> itemResponseDtoList = new ArrayList<>();
         for (Item item : items) {
             itemResponseDtoList.add(itemToItemResponseDto(item, null, null));
@@ -72,12 +82,13 @@ public class ItemMapper {
         return itemResponseDtoList;
     }
 
-    public static Item itemRequestDtoToItem(ItemRequestDto itemRequestDto, User owner) {
+    public static Item itemRequestDtoToItem(ItemRequestDto itemRequestDto, User owner, RequestItem request) {
         return Item.builder()
                 .name(itemRequestDto.getName())
                 .description(itemRequestDto.getDescription())
                 .available(itemRequestDto.getAvailable())
                 .owner(owner)
+                .request(request)
                 .build();
     }
 }

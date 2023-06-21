@@ -1,14 +1,13 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
-import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.model.RequestItem;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,6 +22,6 @@ public class Item {
     @ManyToOne
     @ToString.Exclude
     private User owner;
-    @OneToOne
-    private ItemRequest request;
+    @ManyToOne
+    private RequestItem request;
 }
