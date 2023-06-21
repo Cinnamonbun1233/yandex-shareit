@@ -106,7 +106,6 @@ class BookingControllerTest {
                         .characterEncoding(StandardCharsets.UTF_8)
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                
                 .andExpect(status().isBadRequest());
         verify(bookingService, never()).createNewBooking(any(), anyLong());
     }
@@ -117,7 +116,7 @@ class BookingControllerTest {
         BookingRequestDto bookingRequestDto = getBookingRequestDto();
         bookingRequestDto.setEndDate(bookingRequestDto.getStartDate());
         BookingResponseDto bookingResponseDto = getBookingResponseDto();
-      
+
         when(bookingService.createNewBooking(any(), anyLong()))
                 .thenReturn(bookingResponseDto);
 
@@ -127,7 +126,6 @@ class BookingControllerTest {
                         .header("X-Sharer-User-Id", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-               
                 .andExpectAll(
                         status().isBadRequest()
                 );
@@ -144,7 +142,6 @@ class BookingControllerTest {
         mockMvc.perform(get("/bookings/1")
                         .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
-                
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.id", is(bookingResponseDto.getId()), Long.class),
@@ -166,7 +163,6 @@ class BookingControllerTest {
         mockMvc.perform(get("/bookings/null")
                         .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
-                
                 .andExpect(status().isBadRequest());
         verify(bookingService, never()).getBookingById(anyLong(), anyLong());
     }
@@ -183,7 +179,6 @@ class BookingControllerTest {
                         .param("approved", "true")
                         .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
-                
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.id", is(bookingResponseDto.getId()), Long.class)
@@ -201,7 +196,6 @@ class BookingControllerTest {
         mockMvc.perform(patch("/bookings/1")
                         .param("approved", "true")
                         .accept(MediaType.APPLICATION_JSON))
-                
                 .andExpect(status().isBadRequest());
         verify(bookingService, never()).approveBooking(anyLong(), anyBoolean(), anyLong());
     }
@@ -218,7 +212,6 @@ class BookingControllerTest {
                         .param("state", "WAITING")
                         .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
-                
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$", hasSize(1)),
