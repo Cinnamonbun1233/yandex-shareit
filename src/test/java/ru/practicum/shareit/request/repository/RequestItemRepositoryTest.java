@@ -39,7 +39,6 @@ class RequestItemRepositoryTest {
 
     @Test
     void findAllByRequestorIdShouldReturnRequestsWhenUserIdIsCorrect() {
-        // given
         User userOne = getUser("dima@yandex.ru");
         User userTwo = getUser("fima@yandex.ru");
 
@@ -48,9 +47,9 @@ class RequestItemRepositoryTest {
 
         RequestItem requestOne = getRequest(userOne);
         testEntityManager.persist(requestOne);
-        // when
+
         List<RequestItem> requests = repository.findAllByRequestorId(userOne.getId());
-        // then
+
         assertThat(requests, hasSize(1));
         assertThat(requests, hasItem(allOf(
                 hasProperty("description", containsString("Предмет невероятной красоты")),
@@ -62,7 +61,6 @@ class RequestItemRepositoryTest {
 
     @Test
     void findAllByRequestorIdShouldReturnEmptyResultWhenUserIdIsInCorrect() {
-        // given
         User userOne = getUser("dima@yandex.ru");
         User userTwo = getUser("fima@yandex.ru");
 
@@ -72,15 +70,14 @@ class RequestItemRepositoryTest {
         RequestItem requestOne = getRequest(userOne);
         testEntityManager.persist(requestOne);
         Long incorrectId = 1000L;
-        // when
+
         List<RequestItem> requests = repository.findAllByRequestorId(incorrectId);
-        // then
+
         assertThat(requests, empty());
     }
 
     @Test
     void findAllPagedShouldReturnRequestsWhenUserIsNotRequestor() {
-        // given
         User userOne = getUser("dima@yandex.ru");
         User userTwo = getUser("fima@yandex.ru");
 
@@ -90,9 +87,9 @@ class RequestItemRepositoryTest {
         RequestItem requestOne = getRequest(userOne);
         testEntityManager.persist(requestOne);
         Pageable page = PageRequest.of(0, 10);
-        // when
+
         List<RequestItem> requestsTwo = repository.findAllPaged(page, userTwo.getId()).getContent();
-        // then
+
         assertThat(requestsTwo, hasSize(1));
         assertThat(requestsTwo, hasItem(allOf(
                 hasProperty("description", containsString("Предмет невероятной красоты")),
@@ -104,7 +101,6 @@ class RequestItemRepositoryTest {
 
     @Test
     void findAllPagedShouldReturnEmptyListWhenUserIsRequestor() {
-        // given
         User userOne = getUser("dima@yandex.ru");
         User userTwo = getUser("fima@yandex.ru");
 
@@ -114,9 +110,9 @@ class RequestItemRepositoryTest {
         RequestItem requestOne = getRequest(userOne);
         testEntityManager.persist(requestOne);
         Pageable page = PageRequest.of(0, 10);
-        // when
+
         List<RequestItem> requests = repository.findAllPaged(page, userOne.getId()).getContent();
-        // then
+
         assertThat(requests, empty());
     }
 }

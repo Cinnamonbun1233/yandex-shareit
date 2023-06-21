@@ -33,16 +33,15 @@ class UserRepositoryTest {
 
     @Test
     void deleteUserShouldDeleteUserWhenIdIsCorrect() {
-        // given
         User userOne = getUser("dima@yandex.ru");
         User userTwo = getUser("fima@yandex.ru");
         testEntityManager.persist(userOne);
         testEntityManager.persist(userTwo);
         EntityManager manager = testEntityManager.getEntityManager();
-        // when
+
         userRepository.deleteById(userOne.getId());
         List<User> resultList = manager.createQuery("SELECT u FROM User AS u").getResultList();
-        // then
+
         assertThat(resultList, hasSize(1));
         assertThat(resultList, hasItem(allOf(
                 hasProperty("id", equalTo(userTwo.getId())),
@@ -52,14 +51,13 @@ class UserRepositoryTest {
 
     @Test
     void deleteUserShouldThrowDataAccessExceptionWhenIdIsInCorrect() {
-        // given
         User userOne = getUser("dima@yandex.ru");
         User userTwo = getUser("fima@yandex.ru");
         testEntityManager.persist(userOne);
         testEntityManager.persist(userTwo);
         EntityManager manager = testEntityManager.getEntityManager();
         List<User> resultList = manager.createQuery("SELECT u FROM User as u").getResultList();
-        // when + then
+
         assertThrows(org.springframework.dao.EmptyResultDataAccessException.class,
                 () -> userRepository.deleteById(100L));
         assertThat(resultList, hasSize(2));
@@ -67,10 +65,9 @@ class UserRepositoryTest {
 
     @Test
     void saveUserQUserTest() {
-        // given
         User userOne = getUser("dima@yandex.ru");
         userRepository.save(userOne);
-        // when
+
         List<User> result = userRepository.findAll(QUser.user.id.eq(userOne.getId()), Pageable.unpaged()).getContent();
         assertThat(result, not(empty()));
         assertThat(result.get(0).getId(), equalTo(userOne.getId()));
@@ -78,24 +75,22 @@ class UserRepositoryTest {
 
     @Test
     void saveUserWithDuplicateEmailShouldThrowEx() {
-        // given
         User userOne = getUser("dima@yandex.ru");
         userRepository.save(userOne);
         User userTwo = getUser("dima@yandex.ru");
-        // when + then
+
         assertThrows(org.springframework.dao.DataIntegrityViolationException.class,
                 () -> userRepository.save(userTwo));
     }
 
     @Test
     void findByIdShouldReturnNullWhenUserNotFound() {
-        // given
         User userOne = getUser("dima@yandex.ru");
         User savedUser = userRepository.save(userOne);
         Long userId = savedUser.getId();
-        // when
+
         Optional<User> result = userRepository.findById(++userId);
-        // then
+
         assertTrue(result.isEmpty());
     }
 }

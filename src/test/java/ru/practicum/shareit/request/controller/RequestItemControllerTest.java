@@ -54,9 +54,9 @@ class RequestItemControllerTest {
 
     @Test
     @SneakyThrows
-    void addNewRequest_shouldAddRequest_whenRequestIsValid() {
+    void addNewRequestShouldAddRequestWhenRequestIsValid() {
         RequestItemRequestDto dto = getRequestDto();
-        // when
+
         when(requestItemService.createNewRequest(any(), anyLong()))
                 .thenReturn(dto);
 
@@ -65,7 +65,6 @@ class RequestItemControllerTest {
                         .header("X-Sharer-User-Id", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                // then
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.id", is(dto.getId()), Long.class),
@@ -76,10 +75,10 @@ class RequestItemControllerTest {
 
     @Test
     @SneakyThrows
-    void addNewRequest_withEmptyDescription() {
+    void addNewRequestWithEmptyDescription() {
         RequestItemRequestDto dto = getRequestDto();
         dto.setDescription("");
-        // when
+
         when(requestItemService.createNewRequest(any(), anyLong()))
                 .thenReturn(dto);
 
@@ -90,23 +89,21 @@ class RequestItemControllerTest {
                         .header("X-Sharer-User-Id", "1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                // then
                 .andExpect(status().isBadRequest())
                 .andDo(h -> System.out.println(h.getResponse().getContentAsString()));
     }
 
     @Test
     @SneakyThrows
-    void getRequestById_shouldReturnRequest_whenRequestIsValid() {
-        // given
+    void getRequestByIdShouldReturnRequestWhenRequestIsValid() {
         RequestItemResponseDto dto = getResponseDto();
-        // when
+
         when(requestItemService.getRequestByUserId(anyLong(), anyLong()))
                 .thenReturn(dto);
         mvc.perform(get("/requests/1")
                         .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
-                // then
+
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.id", is(dto.getId()), Long.class),
@@ -118,31 +115,27 @@ class RequestItemControllerTest {
 
     @Test
     @SneakyThrows
-    void getRequestById_shouldReturnBadRequest_whenPathVariableIsIncorrect() {
-        // given
+    void getRequestByIdShouldReturnBadRequestWhenPathVariableIsIncorrect() {
         RequestItemResponseDto dto = getResponseDto();
-        // when
+
         when(requestItemService.getRequestByUserId(anyLong(), anyLong()))
                 .thenReturn(dto);
         mvc.perform(get("/requests/null")
                         .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
-                // then
                 .andExpect(status().isBadRequest());
         verify(requestItemService, never()).getRequestByUserId(anyLong(), anyLong());
     }
 
     @Test
     @SneakyThrows
-    void getRequestById_shouldReturnBadRequest_whenUserIdHeaderIsAbsent() {
-        // given
+    void getRequestByIdShouldReturnBadRequestWhenUserIdHeaderIsAbsent() {
         RequestItemResponseDto dto = getResponseDto();
-        // when
+
         when(requestItemService.getRequestByUserId(anyLong(), anyLong()))
                 .thenReturn(dto);
         mvc.perform(get("/requests/1")
                         .accept(MediaType.APPLICATION_JSON))
-                // then
                 .andExpect(status().isBadRequest());
         verify(requestItemService, never()).getRequestByUserId(anyLong(), anyLong());
     }
@@ -150,10 +143,9 @@ class RequestItemControllerTest {
     @Test
     @SneakyThrows
     void getAllRequests() {
-        // given
         List<RequestItemResponseDto> dtos = List.of(getResponseDto());
 
-        // when
+
         when(requestItemService.getAllRequests(1L, 0, 1))
                 .thenReturn(dtos);
         mvc.perform(get("/requests/all")
@@ -161,7 +153,6 @@ class RequestItemControllerTest {
                         .param("size", "1")
                         .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
-                // then
                 .andExpectAll(
                         status().isOk(),
                         content().contentType(MediaType.APPLICATION_JSON),
@@ -176,16 +167,14 @@ class RequestItemControllerTest {
     @Test
     @SneakyThrows
     void getRequestsByUserId() {
-        // given
         List<RequestItemResponseDto> dtos = List.of(getResponseDto());
 
-        // when
+
         when(requestItemService.getAllRequestsByUserId(1L))
                 .thenReturn(dtos);
         mvc.perform(get("/requests")
                         .header("X-Sharer-User-Id", "1")
                         .accept(MediaType.APPLICATION_JSON))
-                // then
                 .andExpectAll(
                         status().isOk(),
                         content().contentType(MediaType.APPLICATION_JSON),

@@ -2,7 +2,7 @@ CREATE TABLE IF NOT EXISTS users
 (
     id    BIGINT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
     name  varchar(100) NOT NULL,
-    email varchar(320),
+    email varchar(50),
     CONSTRAINT UQ_EMAIL UNIQUE (email)
 );
 

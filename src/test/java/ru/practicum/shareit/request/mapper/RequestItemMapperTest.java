@@ -52,12 +52,11 @@ class RequestItemMapperTest {
 
     @Test
     void toRequestItemDto() {
-        // given
         User requestor = getUser(1L, "dima@yandex.ru");
         RequestItem requestItem = getRequest(requestor);
-        // when
+
         RequestItemRequestDto result = RequestItemMapper.requestItemToRequestItemRequestDto(requestItem);
-        // then
+
         assertThat(result, notNullValue());
         assertThat(result.getId(), equalTo(requestItem.getId()));
         assertThat(result.getDescription(), equalTo(requestItem.getDescription()));
@@ -66,12 +65,11 @@ class RequestItemMapperTest {
 
     @Test
     void dtoToRequest() {
-        // given
         User requestor = getUser(1L, "dima@yandex.ru");
         RequestItemRequestDto dto = getRequestDto();
-        // when
+
         RequestItem result = RequestItemMapper.requestItemRequestDtoToRequestItem(dto, requestor);
-        // then
+
         assertThat(result, notNullValue());
         assertThat(result.getDescription(), equalTo(dto.getDescription()));
         assertThat(result.getCreated(), notNullValue());
@@ -80,15 +78,14 @@ class RequestItemMapperTest {
 
     @Test
     void toResponseDto() {
-        // given
         User requestor = getUser(1L, "dima@yandex.ru");
         User owner = getUser(2L, "dima@yandex.ru");
         Item item = getItem(owner);
         RequestItem requestItem = getRequest(requestor);
         requestItem.setItems(List.of(item));
-        // when
+
         RequestItemResponseDto result = RequestItemMapper.requestItemToRequestItemResponseDto(requestItem);
-        // then
+
         assertThat(result, notNullValue());
         assertThat(result.getId(), equalTo(requestItem.getId()));
         assertThat(result.getDescription(), equalTo(requestItem.getDescription()));

@@ -39,7 +39,7 @@ public class BookingServiceImpl implements BookingService {
     private final ItemRepository itemRepository;
     private final UserRepository userRepository;
 
-    @Transactional
+    @Override
     public BookingResponseDto createNewBooking(BookingRequestDto bookingRequestDto, Long userId) {
         Item item = itemRepository.findById(bookingRequestDto.getItemId())
                 .orElseThrow(() -> new ItemNotFoundException(String.format("Предмет с id: '%s' не найден",
@@ -62,7 +62,7 @@ public class BookingServiceImpl implements BookingService {
 
     public BookingResponseDto getBookingById(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findBooking(bookingId, userId)
-                .orElseThrow(() -> new BookingNotFoundException(String.format("Бронирование с id: '%s' не обнаружено", bookingId)));
+                .orElseThrow(() -> new BookingNotFoundException(String.format("Бронирование с id: '%s' не найдено", bookingId)));
         return BookingMapper.bookingToBookingResponseDto(booking);
     }
 
@@ -101,6 +101,21 @@ public class BookingServiceImpl implements BookingService {
             predicates.add(booking.booker.id.eq(getBookingRequest.getUserId()));
         }
 
+        stateSwitcher(getBookingRequest, predicates, curTime);
+
+        Pageable page = PageRequest.of(getBookingRequest.getFrom(), getBookingRequest.getSize(),
+                Sort.by(Sort.Direction.DESC, "startDate"));
+        List<BookingResponseDto> dtos = BookingMapper.bookingsToBookingResponseDtoList(
+                bookingRepository.findAll(Objects.requireNonNull(ExpressionUtils.allOf(predicates)), page));
+
+        if (dtos.isEmpty())
+            throw new BookingNotFoundException(String.format(
+                    "Пользователь с id: '%s' не имеет бронирования", getBookingRequest.getUserId()));
+
+        return dtos;
+    }
+
+    private static void stateSwitcher(GetBookingRequest getBookingRequest, List<Predicate> predicates, LocalDateTime curTime) {
         switch (getBookingRequest.getState()) {
             case ALL:
                 break;
@@ -123,16 +138,5 @@ public class BookingServiceImpl implements BookingService {
             default:
                 throw new UnknownStateException(State.UNSUPPORTED_STATUS.name());
         }
-
-        Pageable page = PageRequest.of(getBookingRequest.getFrom(), getBookingRequest.getSize(),
-                Sort.by(Sort.Direction.DESC, "startDate"));
-        List<BookingResponseDto> dtos = BookingMapper.bookingsToBookingResponseDtoList(
-                bookingRepository.findAll(Objects.requireNonNull(ExpressionUtils.allOf(predicates)), page));
-
-        if (dtos.isEmpty())
-            throw new BookingNotFoundException(String.format(
-                    "Пользователь с id: '%s' не имеет бронирования", getBookingRequest.getUserId()));
-
-        return dtos;
     }
 }

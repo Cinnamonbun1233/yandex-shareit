@@ -45,14 +45,13 @@ class UserServiceImplTest {
 
     @Test
     void getAllUsers() {
-        // given
         List<User> users = List.of(getUser(1L, "dima@yandex.ru"),
                 getUser(2L, "fima@yandex.ru"));
-        // when
+
         when(userRepository.findAll()).thenReturn(users);
 
         List<UserRequestDto> result = userService.getAllUsers();
-        // then
+
         assertThat(result, hasSize(2));
         for (User user : users) {
             assertThat(result, hasItem(allOf(
@@ -65,14 +64,13 @@ class UserServiceImplTest {
 
     @Test
     void saveUser() {
-        // given
         User user = getUser(1L, "dima@yandex.ru");
         UserRequestDto dto = getUserDto(1L, "dima@yandex.ru");
-        // when
+
         when(userRepository.save(ArgumentMatchers.any()))
                 .thenReturn(user);
         UserRequestDto result = userService.createNewUser(dto);
-        // then
+
         assertThat(result.getId(), equalTo(user.getId()));
         assertThat(result.getName(), equalTo(user.getName()));
         verify(userRepository, times(1)).save(ArgumentMatchers.any());
@@ -80,14 +78,13 @@ class UserServiceImplTest {
     }
 
     @Test
-    void updateUser_shouldThrowUserNotFoundEx() {
-        // given
+    void updateUserShouldThrowUserNotFoundEx() {
         User user = getUser(1L, "dima@yandex.ru");
         UserRequestDto dto = getUserDto(1L, "dima@yandex.ru");
-        // when
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
-        // then
+
         assertThrows(UserNotFoundException.class,
                 () -> userService.updateUserById(dto, 1L));
         verify(userRepository, times(1)).findById(anyLong());
@@ -95,52 +92,48 @@ class UserServiceImplTest {
     }
 
     @Test
-    void updateUser_shouldReturnEmailWhenItsPresent() {
-        // given
+    void updateUserShouldReturnEmailWhenItsPresent() {
         User user = getUser(1L, "dima@yandex.ru");
         UserRequestDto dto = getUserDto(1L, "fima@yandex.ru");
-        // when
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
         when(userRepository.save(any()))
                 .thenReturn(user);
         UserRequestDto result = userService.updateUserById(dto, 1L);
-        // then
+
         assertThat(result.getEmail(), equalTo(dto.getEmail()));
     }
 
     @Test
-    void updateUser_shouldReturnNameWhenItsPresent() {
-        // given
+    void updateUserShouldReturnNameWhenItsPresent() {
         User user = getUser(1L, "dima@yandex.ru");
         UserRequestDto dto = getUserDto(1L, null);
         dto.setName("Fima");
-        // when
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
         when(userRepository.save(any()))
                 .thenReturn(user);
         UserRequestDto result = userService.updateUserById(dto, 1L);
-        // then
+
         assertThat(result.getEmail(), equalTo(user.getEmail()));
         assertThat(result.getName(), equalTo(dto.getName()));
     }
 
     @Test
-    void deleteUser_shouldDeleteUser() {
-        // when
+    void deleteUserShouldDeleteUser() {
         userService.deleteUserById(1L);
-        // then
+
         verify(userRepository, times(1)).deleteById(anyLong());
         verifyNoMoreInteractions(userRepository);
     }
 
     @Test
-    void getUserById_shouldThrowUserNotFoundEx() {
-        // when
+    void getUserByIdShouldThrowUserNotFoundEx() {
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
-        // then
+
         assertThrows(UserNotFoundException.class,
                 () -> userService.getUserById(1L));
         verify(userRepository, times(1)).findById(anyLong());
@@ -148,15 +141,14 @@ class UserServiceImplTest {
     }
 
     @Test
-    void getUserById_shouldReturnUser() {
-        // given
+    void getUserByIdShouldReturnUser() {
         User user = getUser(1L, "dima@yandex.ru");
         UserRequestDto dto = getUserDto(1L, "dima@yandex.ru");
-        // when
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
         UserRequestDto result = userService.getUserById(1L);
-        // then
+
         assertThat(result.getId(), equalTo(user.getId()));
         assertThat(result.getName(), equalTo(user.getName()));
         verify(userRepository, times(1)).findById(anyLong());

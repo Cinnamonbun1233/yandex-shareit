@@ -42,9 +42,9 @@ class RequestItemServiceImplTestIT {
     void addNewRequestShouldCreateRequest() {
         RequestItemRequestDto dto = getRequestDto();
         UserRequestDto firstUser = userService.createNewUser(getUserDto("dima@yandex.ru"));
-        // when
+
         RequestItemRequestDto result = requestItemService.createNewRequest(dto, firstUser.getId());
-        // then
+
         assertThat(result, allOf(
                 hasProperty("id", equalTo(result.getId())),
                 hasProperty("description", containsStringIgnoringCase("Предмет невероятной красоты")),
@@ -55,12 +55,11 @@ class RequestItemServiceImplTestIT {
     @Test
     @DisplayName("getRequests should return requests of requestor")
     void getRequests() {
-        // given
         UserRequestDto userDto = userService.createNewUser(getUserDto("dima@yandex.ru"));
         RequestItemRequestDto requestDto = requestItemService.createNewRequest(getRequestDto(), userDto.getId());
-        // when
+
         List<RequestItemResponseDto> requests = requestItemService.getAllRequestsByUserId(userDto.getId());
-        // then
+
         assertThat(requests, hasSize(1));
         assertThat(requests, hasItem(allOf(
                 hasProperty("id", equalTo(requestDto.getId())),
@@ -72,11 +71,9 @@ class RequestItemServiceImplTestIT {
 
     @Test
     void getRequestsShouldThrowUserNotFound() {
-        // given
         UserRequestDto userDto = userService.createNewUser(getUserDto("dima@yandex.ru"));
         RequestItemRequestDto requestDto = requestItemService.createNewRequest(getRequestDto(), userDto.getId());
 
-        // when + then
         UserNotFoundException ex = assertThrows(UserNotFoundException.class,
                 () -> requestItemService.getAllRequestsByUserId(2L));
 
@@ -86,15 +83,12 @@ class RequestItemServiceImplTestIT {
     @Test
     @DisplayName("getAllRequests should return requests of other user (not requestor)")
     void getAllRequests() {
-        // given
         UserRequestDto firstUser = userService.createNewUser(getUserDto("dima@yandex.ru"));
         UserRequestDto secondUser = userService.createNewUser(getUserDto("fima@yandex.ru"));
         RequestItemRequestDto requestDto = requestItemService.createNewRequest(getRequestDto(), firstUser.getId());
 
-        // when
         List<RequestItemResponseDto> requests = requestItemService.getAllRequests(secondUser.getId(), 0, 10);
 
-        // then
         assertThat(requests, hasSize(1));
         assertThat(requests, hasItem(allOf(
                 hasProperty("id", equalTo(requestDto.getId())),
@@ -106,9 +100,8 @@ class RequestItemServiceImplTestIT {
 
     @Test
     void getAllRequestsShouldThrowUserNotFound() {
-        // given
         UserRequestDto firstUser = userService.createNewUser(getUserDto("dima@yandex.ru"));
-        // when + then
+
         UserNotFoundException ex = assertThrows(UserNotFoundException.class,
                 () -> requestItemService.getAllRequests(2L, 0, 10));
 
@@ -118,19 +111,17 @@ class RequestItemServiceImplTestIT {
     @Test
     @DisplayName("getAllRequests should return empty requests of requestor")
     void getAllRequestsRequestor() {
-        // given
         UserRequestDto userDto = userService.createNewUser(getUserDto("dima@yandex.ru"));
-        // when
+
         List<RequestItemResponseDto> requests = requestItemService.getAllRequests(userDto.getId(), 0, 10);
-        // then
+
         assertThat(requests, empty());
     }
 
     @Test
     void getAllRequestByIdShouldThrowUserNotFound() {
-        // given
         UserRequestDto firstUser = userService.createNewUser(getUserDto("dima@yandex.ru"));
-        // when + then
+
         UserNotFoundException ex = assertThrows(UserNotFoundException.class,
                 () -> requestItemService.getRequestByUserId(2L, 1L));
 

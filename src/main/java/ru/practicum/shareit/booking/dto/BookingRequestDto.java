@@ -3,7 +3,8 @@ package ru.practicum.shareit.booking.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import ru.practicum.shareit.booking.status.BookingStatus;
 import ru.practicum.shareit.booking.validation.DependentValidations;
 import ru.practicum.shareit.booking.validation.ValidBookingDate;
@@ -14,7 +15,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @Builder
 @ValidBookingDate(groups = DependentValidations.class)
 @GroupSequence({BookingRequestDto.class, DependentValidations.class})

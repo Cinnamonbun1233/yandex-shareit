@@ -40,7 +40,7 @@ public class ItemServiceImpl implements ItemService {
     private final CommentRepository commentRepository;
     private final RequestItemRepository requestItemRepository;
 
-    @Transactional
+    @Override
     public ItemShortResponseDto createNewItem(ItemRequestDto itemRequestDto, Long ownerId) {
         User owner = userRepository.findById(ownerId)
                 .orElseThrow(() -> new UserNotFoundException("Пользователь с id: '" + ownerId + "' не найден"));

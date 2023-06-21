@@ -1,10 +1,13 @@
 package ru.practicum.shareit.booking.dto;
 
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import ru.practicum.shareit.booking.status.State;
 
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 public class GetBookingRequest {
     private Long userId;

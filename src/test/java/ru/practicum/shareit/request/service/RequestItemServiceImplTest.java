@@ -67,10 +67,9 @@ class RequestItemServiceImplTest {
 
     @Test
     void addNewRequestShouldThrowUserNotFoundException() {
-        // when
         when(userRepository.findById(anyLong()))
                 .thenThrow(new UserNotFoundException(String.format("Пользователь с id: '%s' не найден", 1L)));
-        // then
+
         final UserNotFoundException ex = assertThrows(UserNotFoundException.class,
                 () -> requestItemService.createNewRequest(requestItemRequestDto, 1L));
 
@@ -79,15 +78,14 @@ class RequestItemServiceImplTest {
 
     @Test
     void addNewRequestShouldReturnRequestDto() {
-        // given
         RequestItem requestItem = RequestItemMapper.requestItemRequestDtoToRequestItem(requestItemRequestDto, requestor);
-        // when
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(requestor));
         when(reqRepo.save(Mockito.any()))
                 .thenReturn(requestItem);
         RequestItemRequestDto requestItemRequestDtoAfter = requestItemService.createNewRequest(requestItemRequestDto, 1L);
-        // then
+
         assertThat(requestItemRequestDtoAfter.getDescription(), equalTo("Предмет невероятной красоты"));
         assertThat(requestItemRequestDtoAfter, instanceOf(RequestItemRequestDto.class));
 
@@ -99,10 +97,9 @@ class RequestItemServiceImplTest {
 
     @Test
     void getAllRequestsShouldThrowUserNotFoundException() {
-        // when
         when(userRepository.existsById(anyLong()))
                 .thenReturn(false);
-        // then
+
         final UserNotFoundException ex = assertThrows(UserNotFoundException.class,
                 () -> requestItemService.getAllRequests(1L, 0, 10));
 
@@ -111,17 +108,15 @@ class RequestItemServiceImplTest {
 
     @Test
     void getAllRequestsShouldReturnRequestList() {
-        // given
         RequestItem requestItem = RequestItemMapper.requestItemRequestDtoToRequestItem(requestItemRequestDto, requestor);
         Page<RequestItem> page = new PageImpl<>(List.of(requestItem));
 
-        // when
         when(userRepository.existsById(anyLong()))
                 .thenReturn(true);
         when(reqRepo.findAllPaged(any(), anyLong()))
                 .thenReturn(page);
         List<RequestItemResponseDto> dtos = requestItemService.getAllRequests(1L, 0, 10);
-        // then
+
         assertThat(dtos, hasSize(dtos.size()));
         assertThat(dtos, hasItem(allOf(
                 hasProperty("description", equalTo("Предмет невероятной красоты")),
@@ -136,10 +131,9 @@ class RequestItemServiceImplTest {
 
     @Test
     void getRequestsShouldThrowUserNotFoundException() {
-        // when
         when(userRepository.existsById(anyLong()))
                 .thenReturn(false);
-        // then
+
         final UserNotFoundException ex = assertThrows(UserNotFoundException.class,
                 () -> requestItemService.getAllRequestsByUserId(1L));
         assertThat(ex.getMessage(), containsString("Пользователь с id: '1' не найден"));
@@ -147,16 +141,15 @@ class RequestItemServiceImplTest {
 
     @Test
     void getRequestsShouldReturnRequestsList() {
-        // given
         RequestItem requestItem = RequestItemMapper.requestItemRequestDtoToRequestItem(requestItemRequestDto, requestor);
-        // when
+
         when(userRepository.existsById(anyLong()))
                 .thenReturn(true);
 
         when(reqRepo.findAllByRequestorId(anyLong()))
                 .thenReturn(List.of(requestItem));
         List<RequestItemResponseDto> dtos = requestItemService.getAllRequestsByUserId(1L);
-        // then
+
         assertThat(dtos, hasSize(dtos.size()));
         assertThat(dtos, hasItem(allOf(
                 hasProperty("description", equalTo("Предмет невероятной красоты")),
@@ -171,10 +164,9 @@ class RequestItemServiceImplTest {
 
     @Test
     void getRequestByIdShouldThrowUserNotFoundException() {
-        // when
         when(userRepository.existsById(anyLong()))
                 .thenReturn(false);
-        // then
+
         final UserNotFoundException ex = assertThrows(UserNotFoundException.class,
                 () -> requestItemService.getRequestByUserId(1L, 1L));
         assertThat(ex.getMessage(), containsString("Пользователь с id: '1' не найден"));
@@ -182,12 +174,11 @@ class RequestItemServiceImplTest {
 
     @Test
     void getRequestByIdShouldThrowRequestNotFoundException() {
-        // when
         when(userRepository.existsById(anyLong()))
                 .thenReturn(true);
         when(reqRepo.findById(anyLong()))
                 .thenReturn(Optional.empty());
-        // then
+
         final RequestNotFoundException ex = assertThrows(RequestNotFoundException.class,
                 () -> requestItemService.getRequestByUserId(1L, 1L));
         assertThat(ex.getMessage(), containsString("Запрос с id: '1' не найден"));
@@ -195,17 +186,16 @@ class RequestItemServiceImplTest {
 
     @Test
     void getRequestByIdShouldReturnRequestResponseDto() {
-        // given
         RequestItem requestItem = RequestItemMapper.requestItemRequestDtoToRequestItem(requestItemRequestDto, requestor);
         requestItem.setId(1L);
-        // when
+
         when(userRepository.existsById(anyLong()))
                 .thenReturn(true);
 
         when(reqRepo.findById(anyLong()))
                 .thenReturn(Optional.of(requestItem));
         RequestItemResponseDto dto = requestItemService.getRequestByUserId(1L, 1L);
-        // then
+
         assertThat(dto, notNullValue());
         assertThat(dto, allOf(
                 hasProperty("id", equalTo(1L)),

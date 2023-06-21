@@ -49,10 +49,9 @@ class UserControllerTest {
     @Test
     @SneakyThrows
     void createUserShouldReturnUser() {
-        // given
         UserRequestDto requestDto = getUserRequestDto("dima@yandex.ru");
         UserRequestDto responseDto = getUserResponseDto("dima@yandex.ru");
-        // when
+
         when(userService.createNewUser(any()))
                 .thenReturn(responseDto);
 
@@ -60,7 +59,6 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
-                // then
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.id", is(responseDto.getId()), Long.class),
@@ -72,14 +70,12 @@ class UserControllerTest {
     @Test
     @SneakyThrows
     void createUserBadRequestWhenEmailIsInvalid() {
-        // given
         UserRequestDto requestDto = getUserRequestDto("dima.ru");
-        // when
+
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
-                // then
                 .andExpectAll(
                         status().isBadRequest()
                 );
@@ -88,15 +84,13 @@ class UserControllerTest {
     @Test
     @SneakyThrows
     void createUserBadRequestWhenEmailIsNull() {
-        // given
         UserRequestDto requestDto = getUserRequestDto("dima.ru");
         requestDto.setEmail(null);
-        // when
+
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
-                // then
                 .andExpect(status().isBadRequest());
         verify(userService, never()).createNewUser(any());
     }
@@ -104,15 +98,14 @@ class UserControllerTest {
     @Test
     @SneakyThrows
     void createUserBadRequestWhenNameIsInvalid() {
-        // given
+
         UserRequestDto requestDto = getUserRequestDto("dima@yandex.ru");
         requestDto.setName("");
-        // when
+
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
-                // then
                 .andExpectAll(
                         status().isBadRequest(),
                         content().contentType(MediaType.APPLICATION_JSON)
@@ -122,16 +115,14 @@ class UserControllerTest {
     @Test
     @SneakyThrows
     void getAllUsersShouldReturnUsersWhenRequestIsCorrect() {
-        // given
         List<UserRequestDto> users = List.of(getUserRequestDto("dima@yandex.ru"),
                 getUserRequestDto("fima@yandex.ru"));
-        // when
+
         when(userService.getAllUsers())
                 .thenReturn(users);
 
         mockMvc.perform(get("/users")
                         .accept(MediaType.APPLICATION_JSON))
-                // then
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$", hasSize(2)),
@@ -143,15 +134,13 @@ class UserControllerTest {
     @Test
     @SneakyThrows
     void getUserByIdShouldReturnUserWhenRequestIsCorrect() {
-        // given
         UserRequestDto user = getUserRequestDto("dima@yandex.ru");
-        // when
+
         when(userService.getUserById(anyLong()))
                 .thenReturn(user);
 
         mockMvc.perform(get("/users/1")
                         .accept(MediaType.APPLICATION_JSON))
-                // then
                 .andExpectAll(
                         status().isOk(),
                         jsonPath("$.name", equalTo(user.getName())),
@@ -162,15 +151,13 @@ class UserControllerTest {
     @Test
     @SneakyThrows
     void getUserByIdShouldReturnBadRequestPathVarIsNull() {
-        // given
         UserRequestDto user = getUserRequestDto("dima@yandex.ru");
-        // when
+
         when(userService.getUserById(anyLong()))
                 .thenReturn(user);
 
         mockMvc.perform(get("/users/null")
                         .accept(MediaType.APPLICATION_JSON))
-                // then
                 .andExpect(status().isBadRequest());
         verify(userService, never()).getUserById(anyLong());
     }
@@ -178,24 +165,22 @@ class UserControllerTest {
     @Test
     @SneakyThrows
     void updateUserBadRequestWhenEmailIsInvalid() {
-        // given
         UserRequestDto requestDto = getUserRequestDto("dima.ru");
-        // when
+
         mockMvc.perform(MockMvcRequestBuilders.patch("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
-                // then
                 .andExpect(status().isBadRequest());
     }
 
     @Test
     @SneakyThrows
     void updateUserShouldReturnUpdatedUser() {
-        // given
+
         UserRequestDto requestDto = getUserRequestDto("dima@yandex.ru");
         UserRequestDto responseDto = getUserResponseDto("fima@yandex.ru");
-        // when
+
         when(userService.updateUserById(any(), anyLong()))
                 .thenReturn(responseDto);
 
@@ -203,7 +188,6 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(requestDto)))
-                // then
                 .andExpectAll(
                         status().isOk(),
                         content().contentType(MediaType.APPLICATION_JSON),
@@ -215,11 +199,9 @@ class UserControllerTest {
     @Test
     @SneakyThrows
     void deleteUserShouldDeleteUserWhenRequestIsCorrect() {
-        // when
         mockMvc.perform(MockMvcRequestBuilders.delete("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON))
-                // then
                 .andExpectAll(
                         status().isOk()
                 );
