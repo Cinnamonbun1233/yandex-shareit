@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
@@ -60,9 +61,9 @@ class BookingServiceImplTestIT {
         UserRequestDto owner = userService.createNewUser(getUserDto("fima@yandex.ru"));
         ItemShortResponseDto item = itemService.createNewItem(getItemDto(), owner.getId());
         BookingResponseDto booking = bookingService.createNewBooking(getBookingRequestDto(item.getId()), user.getId());
-        GetBookingRequest request = GetBookingRequest.of(State.CURRENT, user.getId(), false, 0, 10);
-
-        List<BookingResponseDto> result = bookingService.getAllUserBookings(request);
+        GetBookingRequest request = GetBookingRequest.of(State.CURRENT, user.getId(), false);
+        PageRequest pageRequest = PageRequest.of(0, 10);
+        List<BookingResponseDto> result = bookingService.getAllUserBookings(request, pageRequest);
 
         assertThat(result, hasSize(1));
         assertThat(result, hasItem(allOf(
@@ -81,9 +82,10 @@ class BookingServiceImplTestIT {
         UserRequestDto owner = userService.createNewUser(getUserDto("fima@yandex.ru"));
         ItemShortResponseDto item = itemService.createNewItem(getItemDto(), owner.getId());
         BookingResponseDto booking = bookingService.createNewBooking(getBookingRequestDto(item.getId()), user.getId());
-        GetBookingRequest request = GetBookingRequest.of(State.CURRENT, owner.getId(), true, 0, 10);
+        GetBookingRequest request = GetBookingRequest.of(State.CURRENT, owner.getId(), true);
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
-        List<BookingResponseDto> ownerResult = bookingService.getAllUserBookings(request);
+        List<BookingResponseDto> ownerResult = bookingService.getAllUserBookings(request, pageRequest);
 
         assertThat(ownerResult, hasSize(1));
         assertThat(ownerResult, hasItem(allOf(
@@ -106,9 +108,10 @@ class BookingServiceImplTestIT {
         bookingRequestDto.setStartDate(LocalDateTime.now().plusMinutes(30));
         BookingResponseDto booking = bookingService.createNewBooking(bookingRequestDto, user.getId());
 
-        GetBookingRequest request = GetBookingRequest.of(State.FUTURE, user.getId(), false, 0, 10);
+        GetBookingRequest request = GetBookingRequest.of(State.FUTURE, user.getId(), false);
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
-        List<BookingResponseDto> result = bookingService.getAllUserBookings(request);
+        List<BookingResponseDto> result = bookingService.getAllUserBookings(request, pageRequest);
 
         assertThat(result, hasSize(1));
         assertThat(result, hasItem(allOf(
@@ -132,9 +135,10 @@ class BookingServiceImplTestIT {
         bookingRequestDto.setEndDate(LocalDateTime.now().minusDays(10));
         BookingResponseDto booking = bookingService.createNewBooking(bookingRequestDto, user.getId());
 
-        GetBookingRequest request = GetBookingRequest.of(State.PAST, user.getId(), false, 0, 10);
+        GetBookingRequest request = GetBookingRequest.of(State.PAST, user.getId(), false);
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
-        List<BookingResponseDto> result = bookingService.getAllUserBookings(request);
+        List<BookingResponseDto> result = bookingService.getAllUserBookings(request, pageRequest);
 
         assertThat(result, not(empty()));
         assertThat(result, hasItem(allOf(

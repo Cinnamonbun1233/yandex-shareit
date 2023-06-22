@@ -205,7 +205,7 @@ class BookingControllerTest {
     void getAllUserBookingsShouldReturnBookingWhenRequestIsCorrect() {
         List<BookingResponseDto> bookingResponseDtoList = List.of(getBookingResponseDto());
 
-        when(bookingService.getAllUserBookings(any()))
+        when(bookingService.getAllUserBookings(any(), any()))
                 .thenReturn(bookingResponseDtoList);
 
         mockMvc.perform(get("/bookings")
@@ -224,7 +224,7 @@ class BookingControllerTest {
     void getAllUserItemBookingsShouldReturnBookingWhenRequestIsCorrect() {
         List<BookingResponseDto> bookingResponseDtoList = List.of(getBookingResponseDto());
 
-        when(bookingService.getAllUserBookings(any()))
+        when(bookingService.getAllUserBookings(any(), any()))
                 .thenReturn(bookingResponseDtoList);
 
         mockMvc.perform(get("/bookings/owner")

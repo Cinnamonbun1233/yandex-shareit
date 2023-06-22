@@ -60,6 +60,28 @@ public class BookingServiceImpl implements BookingService {
         return BookingMapper.bookingToBookingResponseDto(bookingRepository.save(booking));
     }
 
+    public List<BookingResponseDto> getAllUserBookings(GetBookingRequest getBookingRequest, PageRequest pageRequest) {
+        List<Predicate> predicateList = new ArrayList<>();
+        LocalDateTime now = LocalDateTime.now();
+
+        if (getBookingRequest.isOwner()) {
+            predicateList.add(booking.item.owner.id.eq(getBookingRequest.getUserId()));
+        } else {
+            predicateList.add(booking.booker.id.eq(getBookingRequest.getUserId()));
+        }
+
+        stateSwitcher(getBookingRequest, predicateList, now);
+
+        List<BookingResponseDto> bookingResponseDtoList = BookingMapper.bookingsToBookingResponseDtoList(
+                bookingRepository.findAll(Objects.requireNonNull(ExpressionUtils.allOf(predicateList)), pageRequest));
+
+        if (bookingResponseDtoList.isEmpty())
+            throw new BookingNotFoundException(String.format(
+                    "Пользователь с id: '%s' не имеет бронирования", getBookingRequest.getUserId()));
+
+        return bookingResponseDtoList;
+    }
+
     public BookingResponseDto getBookingById(Long bookingId, Long userId) {
         Booking booking = bookingRepository.findBooking(bookingId, userId)
                 .orElseThrow(() -> new BookingNotFoundException(String.format("Бронирование с id: '%s' не найдено", bookingId)));
@@ -89,30 +111,6 @@ public class BookingServiceImpl implements BookingService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "Невозможно изменить статус аренды предмета после подтверждения бронирования");
         }
-    }
-
-    public List<BookingResponseDto> getAllUserBookings(GetBookingRequest getBookingRequest) {
-        List<Predicate> predicates = new ArrayList<>();
-        LocalDateTime curTime = LocalDateTime.now();
-
-        if (getBookingRequest.isOwner()) {
-            predicates.add(booking.item.owner.id.eq(getBookingRequest.getUserId()));
-        } else {
-            predicates.add(booking.booker.id.eq(getBookingRequest.getUserId()));
-        }
-
-        stateSwitcher(getBookingRequest, predicates, curTime);
-
-        Pageable page = PageRequest.of(getBookingRequest.getFrom(), getBookingRequest.getSize(),
-                Sort.by(Sort.Direction.DESC, "startDate"));
-        List<BookingResponseDto> dtos = BookingMapper.bookingsToBookingResponseDtoList(
-                bookingRepository.findAll(Objects.requireNonNull(ExpressionUtils.allOf(predicates)), page));
-
-        if (dtos.isEmpty())
-            throw new BookingNotFoundException(String.format(
-                    "Пользователь с id: '%s' не имеет бронирования", getBookingRequest.getUserId()));
-
-        return dtos;
     }
 
     private static void stateSwitcher(GetBookingRequest getBookingRequest, List<Predicate> predicates, LocalDateTime curTime) {

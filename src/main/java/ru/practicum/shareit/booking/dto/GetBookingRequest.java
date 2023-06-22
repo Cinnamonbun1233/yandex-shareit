@@ -15,14 +15,13 @@ public class GetBookingRequest {
     private int from;
     private int size;
 
-    public static GetBookingRequest of(State state, Long userId, boolean isOwner,
-                                       int from, int size) {
+    public static GetBookingRequest of(State state, Long userId, boolean isOwner) {
         GetBookingRequest request = new GetBookingRequest();
         request.setState(state);
         request.setUserId(userId);
         request.setOwner(isOwner);
-        request.setSize(size);
-        request.setFrom(from > 0 ? from / size : 0);
+//        request.setSize(size);
+//        request.setFrom(from > 0 ? from / size : 0);
         return request;
     }
 }

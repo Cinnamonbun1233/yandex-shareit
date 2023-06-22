@@ -11,21 +11,21 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.*;
 import org.springframework.web.server.ResponseStatusException;
-import ru.practicum.shareit.booking.status.BookingStatus;
-import ru.practicum.shareit.booking.status.State;
-import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.dto.GetBookingRequest;
-import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
+import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.repository.BookingRepository;
+import ru.practicum.shareit.booking.status.BookingStatus;
+import ru.practicum.shareit.booking.status.State;
 import ru.practicum.shareit.exception.*;
-import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.item.dto.ItemShortResponseDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.dto.UserShortResponseDto;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -275,15 +275,15 @@ class BookingServiceImplTest {
     @Test
     void getAllUserBookingsShouldThrowBookingNotFoundEx() {
         List<Predicate> predicates = new ArrayList<>();
-        Pageable page = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startDate"));
+        PageRequest page = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startDate"));
         predicates.add(booking.item.owner.id.eq(1L));
 
         when(bookingRepository.findAll(ExpressionUtils.allOf(predicates), page))
                 .thenReturn(Page.empty());
-        GetBookingRequest request = GetBookingRequest.of(State.ALL, 1L, true, 0, 10);
+        GetBookingRequest request = GetBookingRequest.of(State.ALL, 1L, true);
 
         BookingNotFoundException bookingNotFoundException = assertThrows(BookingNotFoundException.class, ()
-                -> bookingService.getAllUserBookings(request));
+                -> bookingService.getAllUserBookings(request, page));
         assertThat(bookingNotFoundException.getMessage(),
                 containsString("Пользователь с id: '1' не имеет бронирования"));
         assertThat(bookingNotFoundException, instanceOf(BookingNotFoundException.class));
@@ -292,7 +292,7 @@ class BookingServiceImplTest {
     @Test
     void getAllUserBookingsShouldReturnBookingsRejected() {
         List<Predicate> predicates = new ArrayList<>();
-        Pageable page = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startDate"));
+        PageRequest page = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startDate"));
         predicates.add(booking.booker.id.eq(1L));
         predicates.add(booking.status.eq(BookingStatus.REJECTED));
         User user = getUser(1L, "dima@yandex.ru");
@@ -304,10 +304,10 @@ class BookingServiceImplTest {
 
         when(bookingRepository.findAll(ExpressionUtils.allOf(predicates), page))
                 .thenReturn(bookings);
-        GetBookingRequest request = GetBookingRequest.of(State.REJECTED, 1L, false, 0, 10);
+        GetBookingRequest request = GetBookingRequest.of(State.REJECTED, 1L, false);
 
-        List<BookingResponseDto> result = bookingService.getAllUserBookings(request);
-        assertDoesNotThrow(() -> bookingService.getAllUserBookings(request));
+        List<BookingResponseDto> result = bookingService.getAllUserBookings(request, page);
+        assertDoesNotThrow(() -> bookingService.getAllUserBookings(request, page));
         assertThat(result, not(empty()));
         assertThat(result, hasItem(allOf(
                 hasProperty("id", equalTo(booking.getId())),
@@ -318,7 +318,7 @@ class BookingServiceImplTest {
     @Test
     void getAllUserBookingsShouldReturnBookingsWAITING() {
         List<Predicate> predicates = new ArrayList<>();
-        Pageable page = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startDate"));
+        PageRequest page = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startDate"));
         predicates.add(booking.booker.id.eq(1L));
         predicates.add(booking.status.eq(BookingStatus.WAITING));
         User user = getUser(1L, "dima@yandex.ru");
@@ -329,10 +329,11 @@ class BookingServiceImplTest {
 
         when(bookingRepository.findAll(ExpressionUtils.allOf(predicates), page))
                 .thenReturn(bookings);
-        GetBookingRequest request = GetBookingRequest.of(State.WAITING, 1L, false, 0, 10);
-        List<BookingResponseDto> result = bookingService.getAllUserBookings(request);
+        GetBookingRequest request = GetBookingRequest.of(State.WAITING, 1L, false);
 
-        assertDoesNotThrow(() -> bookingService.getAllUserBookings(request));
+        List<BookingResponseDto> result = bookingService.getAllUserBookings(request, page);
+
+        assertDoesNotThrow(() -> bookingService.getAllUserBookings(request, page));
         assertThat(result, not(empty()));
         assertThat(result, hasItem(allOf(
                 hasProperty("id", equalTo(booking.getId())),
@@ -342,17 +343,17 @@ class BookingServiceImplTest {
 
     @Test
     void getAllUserBookingsShouldContainFuturePredicate() {
-        Pageable page = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startDate"));
+        PageRequest page = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startDate"));
         User user = getUser(1L, "dima@yandex.ru");
         Item item = getItem(null, true);
         Booking booking = getBooking(user, item);
 
         Page<Booking> bookings = new PageImpl<>(List.of(booking));
-        GetBookingRequest request = GetBookingRequest.of(State.FUTURE, 1L, false, 0, 10);
+        GetBookingRequest request = GetBookingRequest.of(State.FUTURE, 1L, false);
 
         when(bookingRepository.findAll(predicateArgumentCaptor.capture(), eq(page)))
                 .thenReturn(bookings);
-        List<BookingResponseDto> result = bookingService.getAllUserBookings(request);
+        List<BookingResponseDto> result = bookingService.getAllUserBookings(request, page);
 
         Predicate value = predicateArgumentCaptor.getValue();
         assertThat(value, notNullValue());
@@ -362,17 +363,17 @@ class BookingServiceImplTest {
 
     @Test
     void getAllUserBookingsShouldContainCurrentPredicate() {
-        Pageable page = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startDate"));
+        PageRequest page = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startDate"));
         User user = getUser(1L, "dima@yandex.ru");
         Item item = getItem(null, true);
         Booking booking = getBooking(user, item);
 
         Page<Booking> bookings = new PageImpl<>(List.of(booking));
-        GetBookingRequest getBookingRequest = GetBookingRequest.of(State.CURRENT, 1L, false, 0, 10);
+        GetBookingRequest getBookingRequest = GetBookingRequest.of(State.CURRENT, 1L, false);
 
         when(bookingRepository.findAll(predicateArgumentCaptor.capture(), eq(page)))
                 .thenReturn(bookings);
-        List<BookingResponseDto> result = bookingService.getAllUserBookings(getBookingRequest);
+        List<BookingResponseDto> result = bookingService.getAllUserBookings(getBookingRequest, page);
 
         Predicate value = predicateArgumentCaptor.getValue();
         assertThat(value, notNullValue());
@@ -385,17 +386,17 @@ class BookingServiceImplTest {
 
     @Test
     void getAllUserBookingsShouldContainPastPredicate() {
-        Pageable page = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startDate"));
+        PageRequest page = PageRequest.of(0, 10, Sort.by(Sort.Direction.DESC, "startDate"));
         User user = getUser(1L, "dima@yandex.ru");
         Item item = getItem(null, true);
         Booking booking = getBooking(user, item);
 
         Page<Booking> bookings = new PageImpl<>(List.of(booking));
-        GetBookingRequest request = GetBookingRequest.of(State.PAST, 1L, false, 0, 10);
+        GetBookingRequest request = GetBookingRequest.of(State.PAST, 1L, false);
 
         when(bookingRepository.findAll(predicateArgumentCaptor.capture(), eq(page)))
                 .thenReturn(bookings);
-        List<BookingResponseDto> result = bookingService.getAllUserBookings(request);
+        List<BookingResponseDto> result = bookingService.getAllUserBookings(request,page);
 
         Predicate value = predicateArgumentCaptor.getValue();
         assertThat(value, notNullValue());
@@ -405,10 +406,11 @@ class BookingServiceImplTest {
 
     @Test
     void getAllUserBookingsShouldThrowUnknownStateEx() {
-        GetBookingRequest request = GetBookingRequest.of(State.UNSUPPORTED_STATUS, 1L, false, 0, 10);
+        GetBookingRequest request = GetBookingRequest.of(State.UNSUPPORTED_STATUS, 1L, false);
+        PageRequest pageRequest = PageRequest.of(0, 10);
 
         UnknownStateException ex = assertThrows(UnknownStateException.class, ()
-                -> bookingService.getAllUserBookings(request));
+                -> bookingService.getAllUserBookings(request, pageRequest));
         assertThat(ex.getMessage(), containsStringIgnoringCase(State.UNSUPPORTED_STATUS.name()));
     }
 }
