@@ -20,8 +20,6 @@ public class GetBookingRequest {
         request.setState(state);
         request.setUserId(userId);
         request.setOwner(isOwner);
-//        request.setSize(size);
-//        request.setFrom(from > 0 ? from / size : 0);
         return request;
     }
 }
