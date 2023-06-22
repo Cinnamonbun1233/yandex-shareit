@@ -20,16 +20,16 @@ public interface BookingRepository extends JpaRepository<Booking, Long>, Queryds
             "FROM Booking AS b " +
             "JOIN b.item AS i " +
             "JOIN b.booker AS bk " +
-            "WHERE b.id = ?1 " +
-            "AND (bk.id = ?2 OR i.owner.id = ?2)")
-    Optional<Booking> findBooking(Long bookingId, Long userId);
+            "WHERE b.id = :bookingId " +
+            "AND (bk.id = :userId OR i.owner.id = :userId)")
+    Optional<Booking> findBooking(@Param("bookingId") Long bookingId, @Param("userId") Long userId);
 
     @Query("SELECT b " +
             "FROM Booking AS b " +
             "JOIN b.item AS i " +
             "JOIN b.booker AS bk " +
-            "WHERE b.id = ?1 AND i.owner.id = ?2")
-    Optional<Booking> findBookingByOwner(Long bookingId, Long ownerId);
+            "WHERE b.id = :bookingId AND i.owner.id = :ownerId")
+    Optional<Booking> findBookingByOwner(@Param("bookingId") Long bookingId, @Param("ownerId") Long ownerId);
 
     @Query(value = "SELECT * " +
             "FROM bookings AS bk " +

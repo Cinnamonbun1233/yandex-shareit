@@ -7,7 +7,8 @@ import ru.practicum.shareit.user.model.User;
 import javax.persistence.*;
 
 @Entity
-@Data
+@Getter
+@Setter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -19,9 +20,9 @@ public class Item {
     private String name;
     private String description;
     private Boolean available;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private User owner;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private RequestItem request;
 }
