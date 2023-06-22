@@ -26,6 +26,16 @@ public class RequestItem {
     private User requestor;
     @Column(name = "creation_date")
     private LocalDateTime created;
-    @OneToMany(mappedBy = "request")
+    @OneToMany(mappedBy = "request", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Item> items;
+
+    public void addItem(Item item) {
+        this.items.add(item);
+        item.setRequest(this);
+    }
+
+    public void removeItem(Item item) {
+        this.items.remove(item);
+        item.setRequest(null);
+    }
 }
