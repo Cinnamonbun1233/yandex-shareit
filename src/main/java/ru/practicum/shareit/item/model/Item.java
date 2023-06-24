@@ -1,7 +1,7 @@
 package ru.practicum.shareit.item.model;
 
 import lombok.*;
-import ru.practicum.shareit.request.model.ItemRequest;
+import ru.practicum.shareit.request.model.RequestItem;
 import ru.practicum.shareit.user.model.User;
 
 import javax.persistence.*;
@@ -20,9 +20,9 @@ public class Item {
     private String name;
     private String description;
     private Boolean available;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @ToString.Exclude
     private User owner;
-    @OneToOne
-    private ItemRequest request;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private RequestItem request;
 }

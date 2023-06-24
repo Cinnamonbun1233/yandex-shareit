@@ -23,13 +23,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserRequestDto> getAllUsers() {
-        return UserMapper.userToUserRequestDto(userRepository.findAll());
+        return UserMapper.usersToUserRequestDtoList(userRepository.findAll());
     }
 
     @Override
     public UserRequestDto getUserById(Long id) {
-        User user = userRepository.findById(id).orElseThrow(()
-                -> new UserNotFoundException("Пользователь с id: '" + id + "' не найден"));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с id: '" + id + "' не найден"));
         return UserMapper.userToUserRequestDto(user);
     }
 
@@ -37,8 +37,8 @@ public class UserServiceImpl implements UserService {
     public UserRequestDto updateUserById(UserRequestDto userRequestDto, Long id) {
         String email = userRequestDto.getEmail();
         String name = userRequestDto.getName();
-        User user = userRepository.findById(id).orElseThrow(()
-                -> new UserNotFoundException("Пользователь с id: '" + id + "' не найден"));
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("Пользователь с id: '" + id + "' не найден"));
         userPatcher(email, name, user);
         return UserMapper.userToUserRequestDto(userRepository.save(user));
     }

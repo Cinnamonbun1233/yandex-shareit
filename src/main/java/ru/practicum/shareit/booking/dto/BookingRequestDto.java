@@ -15,14 +15,10 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 
-/**
- * TODO Sprint add-bookings.
- */
-
 @Getter
 @Setter
 @Builder
-@ValidBookingDate(groups = {DependentValidations.class})
+@ValidBookingDate(groups = DependentValidations.class)
 @GroupSequence({BookingRequestDto.class, DependentValidations.class})
 public class BookingRequestDto {
     @Null

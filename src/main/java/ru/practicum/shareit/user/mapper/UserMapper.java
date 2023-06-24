@@ -1,7 +1,7 @@
 package ru.practicum.shareit.user.mapper;
 
 import ru.practicum.shareit.user.dto.UserRequestDto;
-import ru.practicum.shareit.user.dto.UserShortDto;
+import ru.practicum.shareit.user.dto.UserShortResponseDto;
 import ru.practicum.shareit.user.model.User;
 
 import java.util.ArrayList;
@@ -16,7 +16,7 @@ public class UserMapper {
                 .build();
     }
 
-    public static List<UserRequestDto> userToUserRequestDto(Iterable<User> users) {
+    public static List<UserRequestDto> usersToUserRequestDtoList(Iterable<User> users) {
         List<UserRequestDto> userRequestDtoList = new ArrayList<>();
         for (User user : users) {
             userRequestDtoList.add(userToUserRequestDto(user));
@@ -24,8 +24,8 @@ public class UserMapper {
         return userRequestDtoList;
     }
 
-    public static UserShortDto userToUserShortDto(User user) {
-        return UserShortDto.builder()
+    public static UserShortResponseDto userToUserShortResponseDto(User user) {
+        return UserShortResponseDto.builder()
                 .id(user.getId())
                 .name(user.getName())
                 .build();

@@ -3,13 +3,14 @@ package ru.practicum.shareit.booking.service;
 import com.querydsl.core.types.ExpressionUtils;
 import com.querydsl.core.types.Predicate;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
+import ru.practicum.shareit.booking.dto.GetBookingRequest;
 import ru.practicum.shareit.booking.mapper.BookingMapper;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.repository.BookingRepository;
@@ -38,55 +39,58 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     public BookingResponseDto createNewBooking(BookingRequestDto bookingRequestDto, Long userId) {
-        Item item = getItemRepo(bookingRequestDto);
+        Item item = itemRepository.findById(bookingRequestDto.getItemId())
+                .orElseThrow(() -> new ItemNotFoundException(String.format("Предмет с id: '%s' не найден",
+                        bookingRequestDto.getItemId())));
 
         if (!item.getAvailable()) {
-            throw new ItemNotAvailableException("Предмет с id: '" + item.getId() + "' недоступен для брони");
+            throw new ItemNotAvailableException(String.format("Предмет с id: '%s' недоступен для бронирования", item.getId()));
         }
 
-        User user = userRepository.findById(userId).orElseThrow(() ->
-                new UserNotFoundException("Пользователь с id: '" + userId + "' не найден"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException(String.format("Пользователь с id: '%s' не найден", userId)));
 
         if (item.getOwner().equals(user)) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Бронь для владельца вещи недоступна");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Бронирование для владельца предмета недоступно");
         }
 
         Booking booking = BookingMapper.bookingRequestDtoToBooking(bookingRequestDto, item, user);
         return BookingMapper.bookingToBookingResponseDto(bookingRepository.save(booking));
     }
 
-    public List<BookingResponseDto> getAllUserBookings(State state, Long userId, boolean owner) {
-        List<Predicate> predicates = new ArrayList<>();
+    public List<BookingResponseDto> getAllUserBookings(GetBookingRequest getBookingRequest, PageRequest pageRequest) {
+        List<Predicate> predicateList = new ArrayList<>();
         LocalDateTime now = LocalDateTime.now();
 
-        if (owner) {
-            predicates.add(booking.item.owner.id.eq(userId));
+        if (getBookingRequest.isOwner()) {
+            predicateList.add(booking.item.owner.id.eq(getBookingRequest.getUserId()));
         } else {
-            predicates.add(booking.booker.id.eq(userId));
+            predicateList.add(booking.booker.id.eq(getBookingRequest.getUserId()));
         }
 
-        stateSwitcher(state, predicates, now);
-        List<BookingResponseDto> bookingResponseDtoList = BookingMapper.bookingToBookingResponseDto(
-                bookingRepository.findAll(Objects.requireNonNull(ExpressionUtils.allOf(predicates)),
-                        Sort.by(Sort.Direction.DESC, "startDate")));
+        stateSwitcher(getBookingRequest, predicateList, now);
+
+        List<BookingResponseDto> bookingResponseDtoList = BookingMapper.bookingsToBookingResponseDtoList(
+                bookingRepository.findAll(Objects.requireNonNull(ExpressionUtils.allOf(predicateList)), pageRequest));
 
         if (bookingResponseDtoList.isEmpty())
-            throw new BookingNotFoundException("Пользователь с id: '" + userId + "' не имеет брони");
+            throw new BookingNotFoundException(String.format(
+                    "Пользователь с id: '%s' не имеет бронирования", getBookingRequest.getUserId()));
 
         return bookingResponseDtoList;
     }
 
     public BookingResponseDto getBookingById(Long bookingId, Long userId) {
-        Booking booking = bookingRepository.findBooking(bookingId, userId).orElseThrow(()
-                -> new BookingNotFoundException("Бронь с id: '" + bookingId + "' не обнаружена"));
+        Booking booking = bookingRepository.findBooking(bookingId, userId)
+                .orElseThrow(() -> new BookingNotFoundException(String.format("Бронирование с id: '%s' не найдено", bookingId)));
         return BookingMapper.bookingToBookingResponseDto(booking);
     }
 
     @Transactional
     public BookingResponseDto approveBooking(Long bookingId, Boolean approved, Long ownerId) {
-        Booking booking = bookingRepository.findBookingByOwner(bookingId, ownerId).orElseThrow(()
-                -> new BookingNotFoundException("Бронь с id: '" + bookingId + "' для пользователя с id: '"
-                + ownerId + "' не обнаружена"));
+        Booking booking = bookingRepository.findBookingByOwner(bookingId, ownerId)
+                .orElseThrow(() -> new BookingNotFoundException(String.format(
+                        "Бронирование с id: '%s' для владельца предмета с id: '%s' не найдено", bookingId, ownerId)));
         checkAlreadyApproved(booking);
 
         if (approved) {
@@ -103,27 +107,23 @@ public class BookingServiceImpl implements BookingService {
 
         if (booking.getStatus() != null && (status == BookingStatus.APPROVED || status == BookingStatus.REJECTED)) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Невозможно изменить статус аренды после подтверждения");
+                    "Невозможно изменить статус аренды предмета после подтверждения бронирования");
         }
     }
 
-    private Item getItemRepo(BookingRequestDto bookingRequestDto) {
-        return itemRepository.findById(bookingRequestDto.getItemId()).orElseThrow(() ->
-                new ItemNotFoundException("Предмет с id: '" + bookingRequestDto.getItemId() + "' не найден"));
-    }
-
-    private static void stateSwitcher(State state, List<Predicate> predicates, LocalDateTime now) {
-        switch (state) {
+    private static void stateSwitcher(GetBookingRequest getBookingRequest, List<Predicate> predicates, LocalDateTime curTime) {
+        switch (getBookingRequest.getState()) {
             case ALL:
                 break;
             case FUTURE:
-                predicates.add(booking.startDate.after(now));
+                predicates.add(booking.startDate.after(curTime));
                 break;
             case PAST:
-                predicates.add(booking.endDate.before(now));
+                predicates.add(booking.endDate.before(curTime));
                 break;
             case CURRENT:
-                predicates.add(booking.startDate.loe(now).and(booking.endDate.gt(now)));
+                predicates.add(booking.startDate.loe(curTime)
+                        .and(booking.endDate.gt(curTime)));
                 break;
             case REJECTED:
                 predicates.add(booking.status.eq(BookingStatus.REJECTED));

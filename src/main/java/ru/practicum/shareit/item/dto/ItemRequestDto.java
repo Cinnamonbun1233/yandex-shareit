@@ -3,7 +3,7 @@ package ru.practicum.shareit.item.dto;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
-import ru.practicum.shareit.item.validation.NewItem;
+import ru.practicum.shareit.item.validation.CreateItem;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,12 +13,13 @@ import javax.validation.constraints.Null;
 @Setter
 @Builder
 public class ItemRequestDto {
-    @Null(groups = {NewItem.class})
+    @Null(groups = {CreateItem.class})
     private Long id;
-    @NotBlank(groups = {NewItem.class}, message = "Получен предмет с пустным названием")
+    @NotBlank(groups = {CreateItem.class})
     private String name;
-    @NotBlank(groups = {NewItem.class}, message = "Получен предмет с пустным описанием")
+    @NotBlank(groups = {CreateItem.class})
     private String description;
-    @NotNull(groups = {NewItem.class}, message = "Получен предмет без статуса доступности")
+    @NotNull(groups = {CreateItem.class})
     private Boolean available;
+    private Long requestId;
 }
