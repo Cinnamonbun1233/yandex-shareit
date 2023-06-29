@@ -37,7 +37,7 @@ class UserControllerTest {
     @SneakyThrows
     void createUserBadRequestWhenEmailIsInvalid() {
         UserRequestDto userRequestDto = getUserRequestDto("dima.ru");
-     
+
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -53,7 +53,7 @@ class UserControllerTest {
     void createUserBadRequestWhenNameIsInvalid() {
         UserRequestDto userRequestDto = getUserRequestDto("dima@yandex.ru");
         userRequestDto.setName("");
-   
+
         mockMvc.perform(MockMvcRequestBuilders.post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
@@ -67,7 +67,7 @@ class UserControllerTest {
     @SneakyThrows
     void updateUserBadRequestWhenEmailIsInvalid() {
         UserRequestDto userRequestDto = getUserRequestDto("dimaru");
-  
+
         mockMvc.perform(MockMvcRequestBuilders.patch("/users/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .accept(MediaType.APPLICATION_JSON)
