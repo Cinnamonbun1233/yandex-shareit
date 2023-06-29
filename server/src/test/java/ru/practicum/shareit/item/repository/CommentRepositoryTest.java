@@ -63,9 +63,9 @@ class CommentRepositoryTest {
         Comment comment = getComment(author, item);
         testEntityManager.persist(comment);
         Pageable page = PageRequest.of(0, 10);
-        
+
         List<Comment> comments = commentRepository.searchByText(item.getId(), "Отличные грабли", page);
-      
+
         assertThat(comments, hasSize(1));
         assertThat(comments, hasItem(comment));
     }

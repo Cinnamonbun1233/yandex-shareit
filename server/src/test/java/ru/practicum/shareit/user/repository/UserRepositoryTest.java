@@ -39,10 +39,10 @@ class UserRepositoryTest {
         testEntityManager.persist(userOne);
         testEntityManager.persist(userTwo);
         EntityManager entityManager = testEntityManager.getEntityManager();
-     
+
         userRepository.deleteById(userOne.getId());
         List<User> resultList = entityManager.createQuery("SELECT u FROM User AS u").getResultList();
-       
+
         assertThat(resultList, hasSize(1));
         assertThat(resultList, hasItem(allOf(
                 hasProperty("id", equalTo(userTwo.getId())),

@@ -13,13 +13,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import ru.practicum.shareit.exception.RequestNotFoundException;
 import ru.practicum.shareit.exception.UserNotFoundException;
-import ru.practicum.shareit.request.repository.RequestItemRepository;
 import ru.practicum.shareit.request.dto.RequestItemRequestDto;
 import ru.practicum.shareit.request.dto.RequestItemResponseDto;
-import ru.practicum.shareit.request.model.RequestItem;
 import ru.practicum.shareit.request.mapper.RequestItemMapper;
-import ru.practicum.shareit.user.repository.UserRepository;
+import ru.practicum.shareit.request.model.RequestItem;
+import ru.practicum.shareit.request.repository.RequestItemRepository;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;

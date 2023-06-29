@@ -6,11 +6,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.booking.status.BookingStatus;
-import ru.practicum.shareit.booking.status.State;
 import ru.practicum.shareit.booking.dto.BookingRequestDto;
 import ru.practicum.shareit.booking.dto.BookingResponseDto;
 import ru.practicum.shareit.booking.dto.GetBookingRequest;
+import ru.practicum.shareit.booking.status.BookingStatus;
+import ru.practicum.shareit.booking.status.State;
 import ru.practicum.shareit.item.dto.ItemRequestDto;
 import ru.practicum.shareit.item.dto.ItemShortResponseDto;
 import ru.practicum.shareit.item.service.ItemService;
@@ -55,7 +55,7 @@ class BookingServiceImplTestIT {
                 .itemId(itemId)
                 .build();
     }
-    
+
     @Test
     void getAllUserBookingsWhenNotOwner() {
         UserRequestDto user = userService.createNewUser(getUserDto("dima@yandex.ru"));

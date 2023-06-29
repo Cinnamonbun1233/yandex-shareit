@@ -1,9 +1,9 @@
 package ru.practicum.shareit.item.mapper;
 
 import org.junit.jupiter.api.Test;
-import ru.practicum.shareit.booking.status.BookingStatus;
 import ru.practicum.shareit.booking.dto.BookingShortDto;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.status.BookingStatus;
 import ru.practicum.shareit.booking.validation.BookingMapper;
 import ru.practicum.shareit.item.dto.CommentResponseDto;
 import ru.practicum.shareit.item.dto.ItemRequestDto;
@@ -81,9 +81,9 @@ class ItemMapperTest {
     void itemToDto() {
         User user = getUser(1L, "dima@yandex.ru");
         Item item = getItem(user);
-       
+
         ItemRequestDto result = ItemMapper.itemToItemRequestDto(item);
-       
+
         assertThat(result, notNullValue());
         assertThat(result.getId(), equalTo(item.getId()));
         assertThat(result.getName(), equalTo(item.getName()));
@@ -114,9 +114,9 @@ class ItemMapperTest {
         BookingShortDto lastBooking = BookingMapper.bookingToBookingShortDto(getBooking(item, booker));
         lastBooking.setStart(now.minusDays(2));
         lastBooking.setEnd(now.minusDays(1));
-     
+
         ItemResponseDto result = ItemMapper.itemToItemResponseDto(item, nextBooking, lastBooking);
-   
+
         assertThat(result, notNullValue());
         assertThat(result.getLastBooking(), equalTo(lastBooking));
         assertThat(result.getNextBooking(), equalTo(nextBooking));
@@ -138,9 +138,9 @@ class ItemMapperTest {
         lastBooking.setStart(now.minusDays(2));
         lastBooking.setEnd(now.minusDays(1));
         List<CommentResponseDto> comments = List.of(CommentMapper.commentToCommentResponseDto(getComment(1L, author, item)));
-        
+
         ItemResponseDto result = ItemMapper.itemToItemResponseDto(item, nextBooking, lastBooking, comments);
-      
+
         assertThat(result, notNullValue());
         assertThat(result.getLastBooking(), equalTo(lastBooking));
         assertThat(result.getNextBooking(), equalTo(nextBooking));
@@ -156,9 +156,9 @@ class ItemMapperTest {
         User owner = getUser(1L, "dima@yandex.ru");
         User requestor = getUser(2L, "fima@yandex.ru");
         RequestItem request = getRequest(requestor);
-       
+
         Item result = ItemMapper.itemRequestDtoToItem(dto, owner, request);
-       
+
         assertThat(result, notNullValue());
         assertThat(result.getName(), equalTo(dto.getName()));
         assertThat(result.getRequest(), equalTo(request));

@@ -7,9 +7,9 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.practicum.shareit.exception.UserNotFoundException;
-import ru.practicum.shareit.user.repository.UserRepository;
 import ru.practicum.shareit.user.dto.UserRequestDto;
 import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -48,11 +48,11 @@ class UserServiceImplTest {
     void getAllUsers() {
         List<User> users = List.of(getUser(1L, "dima@yandex.ru"),
                 getUser(2L, "fima@yandex.ru"));
-  
+
         when(userRepository.findAll()).thenReturn(users);
 
         List<UserRequestDto> result = userService.getAllUsers();
-  
+
         assertThat(result, hasSize(2));
         for (User user : users) {
             assertThat(result, hasItem(allOf(
@@ -67,11 +67,11 @@ class UserServiceImplTest {
     void saveUser() {
         User user = getUser(1L, "dima@yandex.ru");
         UserRequestDto userRequestDto = getUserDto(1L, "dima@yandex.ru");
-  
+
         when(userRepository.save(ArgumentMatchers.any()))
                 .thenReturn(user);
         UserRequestDto result = userService.createNewUser(userRequestDto);
-     
+
         assertThat(result.getId(), equalTo(user.getId()));
         assertThat(result.getName(), equalTo(user.getName()));
         verify(userRepository, times(1)).save(ArgumentMatchers.any());
@@ -82,11 +82,11 @@ class UserServiceImplTest {
     void updateUserShouldThrowUserNotFoundEx() {
         User user = getUser(1L, "dima@yandex.ru");
         UserRequestDto userRequestDto = getUserDto(1L, "dima@yandex.ru");
- 
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.empty());
-    
-        assertThrows(UserNotFoundException.class, () 
+
+        assertThrows(UserNotFoundException.class, ()
                 -> userService.updateUserById(userRequestDto, 1L));
         verify(userRepository, times(1)).findById(anyLong());
         verifyNoMoreInteractions(userRepository);
@@ -96,13 +96,13 @@ class UserServiceImplTest {
     void updateUserShouldReturnEmailWhenItsPresent() {
         User user = getUser(1L, "dima@yandex.ru");
         UserRequestDto userRequestDto = getUserDto(1L, "fima@yandex.ru");
-     
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
         when(userRepository.save(any()))
                 .thenReturn(user);
         UserRequestDto result = userService.updateUserById(userRequestDto, 1L);
-       
+
         assertThat(result.getEmail(), equalTo(userRequestDto.getEmail()));
     }
 
@@ -111,7 +111,7 @@ class UserServiceImplTest {
         User user = getUser(1L, "dima@yandex.ru");
         UserRequestDto userRequestDto = getUserDto(1L, null);
         userRequestDto.setName("Фима");
-  
+
         when(userRepository.findById(anyLong()))
                 .thenReturn(Optional.of(user));
         when(userRepository.save(any()))

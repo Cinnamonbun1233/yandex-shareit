@@ -21,9 +21,9 @@ class UserMapperTest {
     @Test
     void userToDto() {
         User user = getUser(1L, "dima@yandex.ru");
-    
+
         UserRequestDto result = UserMapper.userToUserRequestDto(user);
-   
+
         assertThat(result, notNullValue());
         assertThat(result.getId(), equalTo(user.getId()));
         assertThat(result.getName(), equalTo(user.getName()));
@@ -33,9 +33,9 @@ class UserMapperTest {
     @Test
     void toUserShort() {
         User user = getUser(1L, "dima@yandex.ru");
-     
+
         UserShortResponseDto result = UserMapper.userToUserShortResponseDto(user);
-     
+
         assertThat(result, notNullValue());
         assertThat(result.getId(), equalTo(user.getId()));
         assertThat(result.getName(), equalTo(user.getName()));
@@ -47,9 +47,9 @@ class UserMapperTest {
                 .name("Дима")
                 .email("dima@yandex.ru")
                 .build();
- 
+
         User user = UserMapper.userRequestDtoToUser(userRequestDto);
-   
+
         assertThat(user, notNullValue());
         assertThat(user.getId(), nullValue());
         assertThat(user.getName(), equalTo(userRequestDto.getName()));
