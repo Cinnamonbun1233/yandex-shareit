@@ -12,7 +12,6 @@ import ru.practicum.shareit.user.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
-//Готово
 public class ItemMapper {
     public static ItemRequestDto itemToItemRequestDto(Item item) {
         return ItemRequestDto.builder()

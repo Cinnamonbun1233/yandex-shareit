@@ -5,7 +5,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import ru.practicum.shareit.booking.status.State;
 
-//Готово
 @Getter
 @Setter
 @NoArgsConstructor

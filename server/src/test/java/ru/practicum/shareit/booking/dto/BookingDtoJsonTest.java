@@ -13,7 +13,6 @@ import java.time.format.DateTimeFormatter;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//Готово
 @JsonTest
 public class BookingDtoJsonTest {
     @Autowired

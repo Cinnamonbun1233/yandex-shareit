@@ -16,7 +16,6 @@ import ru.practicum.shareit.user.mapper.UserRequestDto;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//Готово
 @WebMvcTest(controllers = UserController.class)
 class UserControllerTest {
     @Autowired

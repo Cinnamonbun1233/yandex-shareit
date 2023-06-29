@@ -29,7 +29,6 @@ import java.util.Objects;
 
 import static ru.practicum.shareit.booking.model.QBooking.booking;
 
-//Готово
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)

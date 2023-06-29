@@ -1,6 +1,5 @@
 package ru.practicum.shareit.booking.status;
 
-//Готово
 public enum State {
     ALL,
     CURRENT,

@@ -6,7 +6,6 @@ import lombok.Setter;
 
 import java.time.LocalDateTime;
 
-//Готово
 @Getter
 @Setter
 @Builder

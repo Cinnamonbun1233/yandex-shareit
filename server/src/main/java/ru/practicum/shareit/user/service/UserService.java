@@ -4,7 +4,6 @@ import ru.practicum.shareit.user.dto.UserRequestDto;
 
 import java.util.List;
 
-//Готово
 public interface UserService {
     UserRequestDto createNewUser(UserRequestDto userRequestDto);
 

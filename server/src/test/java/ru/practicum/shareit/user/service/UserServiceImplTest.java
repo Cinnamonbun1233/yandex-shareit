@@ -20,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 
-//Готово
 @ExtendWith(MockitoExtension.class)
 class UserServiceImplTest {
     @Mock

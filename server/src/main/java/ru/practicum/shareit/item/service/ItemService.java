@@ -4,7 +4,6 @@ import ru.practicum.shareit.item.dto.*;
 
 import java.util.List;
 
-//Готово
 public interface ItemService {
     ItemShortResponseDto createNewItem(ItemRequestDto itemRequestDto, Long ownerId);
 

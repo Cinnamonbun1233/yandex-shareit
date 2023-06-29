@@ -7,7 +7,6 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.util.List;
 
-//Готово
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/users")

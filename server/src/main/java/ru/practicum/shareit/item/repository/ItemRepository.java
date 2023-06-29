@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
-//Готово
 public interface ItemRepository extends JpaRepository<Item, Long> {
     @Query("SELECT i " +
             "FROM Item AS i " +

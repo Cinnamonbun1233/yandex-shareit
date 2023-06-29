@@ -20,7 +20,6 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-//Готово
 class ItemMapperTest {
     private static ItemRequestDto getItemRequestDto() {
         return ItemRequestDto.builder()

@@ -9,7 +9,6 @@ import ru.practicum.shareit.item.model.Comment;
 
 import java.util.List;
 
-//Готово
 public interface CommentRepository extends JpaRepository<Comment, Long>, QuerydslPredicateExecutor<Comment> {
     @Query("SELECT c " +
             "FROM Comment AS c " +

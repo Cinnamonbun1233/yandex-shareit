@@ -9,7 +9,6 @@ import ru.practicum.shareit.user.mapper.UserRequestDto;
 import ru.practicum.shareit.user.validation.CreateUser;
 import ru.practicum.shareit.user.validation.UpdateUser;
 
-//Готово
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/users")

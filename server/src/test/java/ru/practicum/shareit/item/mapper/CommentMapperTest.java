@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-//Готово
 class CommentMapperTest {
     private static CommentRequestDto getCommentRequestDto() {
         return CommentRequestDto.builder()

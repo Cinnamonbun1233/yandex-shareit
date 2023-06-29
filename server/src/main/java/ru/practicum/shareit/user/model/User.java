@@ -4,7 +4,6 @@ import lombok.*;
 
 import javax.persistence.*;
 
-//Готово
 @Entity
 @Getter
 @Setter

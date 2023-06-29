@@ -8,7 +8,6 @@ import ru.practicum.shareit.item.dto.ItemShortResponseDto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-//Готово
 @Getter
 @Setter
 @Builder

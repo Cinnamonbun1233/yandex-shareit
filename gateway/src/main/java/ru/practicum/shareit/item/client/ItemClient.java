@@ -13,7 +13,6 @@ import ru.practicum.shareit.item.dto.ItemRequestDto;
 
 import java.util.Map;
 
-//Готово
 @Service
 public class ItemClient extends BaseClient {
     private static final String API_PREFIX = "/items";

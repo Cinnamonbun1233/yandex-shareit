@@ -13,7 +13,6 @@ import java.util.List;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-//Готово
 class RequestItemMapperTest {
     private static RequestItem getRequest(User requestor) {
         return RequestItem.builder()

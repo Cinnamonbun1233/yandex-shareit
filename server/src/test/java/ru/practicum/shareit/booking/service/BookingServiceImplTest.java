@@ -45,7 +45,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 import static ru.practicum.shareit.booking.model.QBooking.booking;
 
-//Готово
 @ExtendWith(MockitoExtension.class)
 class BookingServiceImplTest {
     @Mock

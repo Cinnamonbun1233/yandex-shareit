@@ -10,7 +10,6 @@ import ru.practicum.shareit.user.dto.UserShortResponseDto;
 
 import java.time.LocalDateTime;
 
-//Готово
 @Getter
 @Setter
 @Builder

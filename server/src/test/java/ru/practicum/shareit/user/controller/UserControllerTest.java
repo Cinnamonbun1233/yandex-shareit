@@ -22,7 +22,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-//Готово
 @WebMvcTest(controllers = UserController.class)
 class UserControllerTest {
     @Autowired

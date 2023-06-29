@@ -11,7 +11,6 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
 
-//Готово
 @RestController
 @RequestMapping(path = "/requests")
 @RequiredArgsConstructor

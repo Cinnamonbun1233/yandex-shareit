@@ -7,7 +7,6 @@ import ru.practicum.shareit.booking.dto.GetBookingRequest;
 
 import java.util.List;
 
-//Готово
 public interface BookingService {
     BookingResponseDto createNewBooking(BookingRequestDto bookingRequestDto, Long userId);
 

@@ -25,7 +25,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-//Готово
 @WebMvcTest(controllers = ItemController.class)
 class ItemControllerTest {
     @Autowired

@@ -10,7 +10,6 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
-//Готово
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {

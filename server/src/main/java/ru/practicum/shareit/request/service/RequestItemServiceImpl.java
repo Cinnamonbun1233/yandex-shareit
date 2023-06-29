@@ -17,7 +17,6 @@ import ru.practicum.shareit.user.model.User;
 
 import java.util.List;
 
-//Готово
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)

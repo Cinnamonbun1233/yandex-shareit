@@ -9,7 +9,6 @@ import ru.practicum.shareit.user.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
-//Готово
 public class CommentMapper {
     public static Comment commentRequestDtoToComment(CommentRequestDto commentRequestDto, User author, Item item) {
         return Comment.builder()

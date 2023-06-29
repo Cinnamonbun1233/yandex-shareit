@@ -8,7 +8,6 @@ import ru.practicum.shareit.user.model.User;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 
-//Готово
 class UserMapperTest {
     private static User getUser(Long id, String email) {
         return User.builder()

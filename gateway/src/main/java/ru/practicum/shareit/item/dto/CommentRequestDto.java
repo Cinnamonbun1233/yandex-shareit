@@ -9,7 +9,6 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
 import java.time.LocalDateTime;
 
-//Готово
 @Getter
 @Setter
 @Builder

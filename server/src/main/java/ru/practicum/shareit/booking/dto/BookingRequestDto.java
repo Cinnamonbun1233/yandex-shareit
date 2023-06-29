@@ -8,7 +8,6 @@ import ru.practicum.shareit.booking.status.BookingStatus;
 
 import java.time.LocalDateTime;
 
-//Готово
 @Getter
 @Setter
 @Builder

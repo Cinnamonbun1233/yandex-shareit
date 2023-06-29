@@ -11,7 +11,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-//Готово
 public class RequestItemMapper {
     public static RequestItemRequestDto requestItemToRequestItemRequestDto(RequestItem requestItem) {
         return RequestItemRequestDto.builder()

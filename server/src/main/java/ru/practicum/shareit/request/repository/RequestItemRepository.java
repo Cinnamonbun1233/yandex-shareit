@@ -11,7 +11,6 @@ import ru.practicum.shareit.request.model.RequestItem;
 
 import java.util.List;
 
-//Готово
 public interface RequestItemRepository extends JpaRepository<RequestItem, Long>, QuerydslPredicateExecutor<RequestItem> {
     @Query("SELECT req " +
             "FROM RequestItem AS req " +

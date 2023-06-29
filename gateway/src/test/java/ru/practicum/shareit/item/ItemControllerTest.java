@@ -19,7 +19,6 @@ import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-//Готово
 @WebMvcTest(controllers = ItemController.class)
 class ItemControllerTest {
     @Autowired

@@ -18,7 +18,6 @@ import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-//Готово
 @DataJpaTest
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class UserRepositoryTest {

@@ -12,7 +12,6 @@ import ru.practicum.shareit.booking.status.State;
 
 import java.util.List;
 
-//Готово
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(path = "/bookings")

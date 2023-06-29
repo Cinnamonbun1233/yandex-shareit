@@ -4,7 +4,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-//Готово
 @Getter
 @Setter
 @NoArgsConstructor

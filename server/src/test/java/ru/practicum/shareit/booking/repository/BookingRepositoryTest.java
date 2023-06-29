@@ -18,7 +18,6 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-//Готово
 @DataJpaTest
 class BookingRepositoryTest {
     @Autowired

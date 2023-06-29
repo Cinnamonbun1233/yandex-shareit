@@ -6,7 +6,6 @@ import ru.practicum.shareit.booking.status.State;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
-//Готово
 class GetBookingRequestTest {
     @Test
     void of() {

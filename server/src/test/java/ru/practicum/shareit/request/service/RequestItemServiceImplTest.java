@@ -31,7 +31,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.*;
 
-//Готово
 @ExtendWith(MockitoExtension.class)
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 class RequestItemServiceImplTest {

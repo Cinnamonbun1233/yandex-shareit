@@ -10,7 +10,6 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.user.mapper.UserRequestDto;
 
-//Готово
 @Service
 public class UserClient extends BaseClient {
     private static final String API_PREFIX = "/users";

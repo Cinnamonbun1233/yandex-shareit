@@ -11,7 +11,6 @@ import ru.practicum.shareit.exception.*;
 import java.util.Map;
 import java.util.Objects;
 
-//Готово
 @Slf4j
 @RestControllerAdvice(basePackages = "ru.practicum.shareit")
 public class ErrorHandler {

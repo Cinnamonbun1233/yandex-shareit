@@ -7,7 +7,6 @@ import ru.practicum.shareit.booking.dto.BookingShortDto;
 
 import java.util.List;
 
-//Готово
 @Getter
 @Setter
 @Builder

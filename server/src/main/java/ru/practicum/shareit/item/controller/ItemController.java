@@ -7,7 +7,6 @@ import ru.practicum.shareit.item.service.ItemService;
 
 import java.util.List;
 
-//Готово
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/items")
