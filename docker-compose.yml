@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  gateway:
+    build: ./gateway
+    image: gateway-image
+    container_name: shareit-gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - server
+    environment:
+#      - TZ=Europe/Moscow
+      - SHAREIT_SERVER_URL=http://server:9090
+
+  server:
+    build: ./server
+    image: server-image
+    container_name: shareit-server
+    ports:
+      - "9090:9090"
+      - "9091:9091"
+    depends_on:
+      - db
+    environment:
+#      - TZ=Europe/Moscow
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
+
+  db:
+    image: postgres:13
+    container_name: shareit-db
+    ports:
+      - "6541:5432"
+    environment:
+#      - TZ=Europe/Moscow
+      - POSTGRES_DB=shareit
+      - POSTGRES_USER=dima
+      - POSTGRES_PASSWORD=12345
