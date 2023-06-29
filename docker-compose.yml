@@ -23,15 +23,15 @@ services:
       - db
     environment:
 #      - TZ=Europe/Moscow
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/shareit
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/postgres
 
   db:
     image: postgres:13
-    container_name: shareit-db
+    container_name: postgres-db
     ports:
       - "6541:5432"
     environment:
 #      - TZ=Europe/Moscow
-      - POSTGRES_DB=shareit
+      - POSTGRES_DB=postgres
       - POSTGRES_USER=dima
       - POSTGRES_PASSWORD=12345
